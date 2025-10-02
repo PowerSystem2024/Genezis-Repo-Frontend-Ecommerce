@@ -1,0 +1,23 @@
+
+// 1. Importar variables
+@import 'variables';
+
+// 2. Reseteos básicos y estilos globales
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: $dark-bg;
+  color: $light-text;
+}
+
+a {
+  text-decoration: none;
+  color: $primary-color;
+}
