@@ -1,15 +1,16 @@
 import React from 'react';
-// 1. Añadir 'Navigate' que faltaba
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
-// Layout
+// --- LAYOUTS ---
+import AdminLayout from '../pages/Dashboard/AdminLayout/AdminLayout';
+
+// --- COMPONENTES DE LAYOUT PÚBLICO ---
+// No los importamos como un layout separado, sino los componentes que lo forman
 import Navbar from '../components/common/Navbar/Navbar';
 import Footer from '../components/common/Footer/Footer';
 import CartSidebar from '../components/common/CartSidebar/CartSidebar';
-// 2. Mantener UNA SOLA importación de AdminLayout
-import AdminLayout from '../pages/Admin/AdminLayout/AdminLayout';
 
-// Páginas
+// --- PÁGINAS PÚBLICAS Y DE USUARIO ---
 import Home from '../pages/Home/Home';
 import ProductCatalog from '../pages/ProductCatalog/ProductCatalog';
 import ProductDetail from '../pages/ProductDetail/ProductDetail';
@@ -20,51 +21,58 @@ import Checkout from '../pages/Checkout/Checkout';
 import PaymentSuccess from '../pages/PaymentStatus/PaymentSuccess';
 import PaymentFailure from '../pages/PaymentStatus/PaymentFailure';
 
-// Páginas de Administración
-// 3. Eliminar la importación duplicada de aquí
-import AdminProducts from '../pages/Admin/AdminProducts';
-import AdminProfile from '../pages/Admin/AdminProfile';
-import AdminOrders from '../pages/Admin/AdminOrders/AdminOrders';
+// --- PÁGINAS DE ADMINISTRACIÓN ---
+// Las páginas del área de administración se movieron a pages/Dashboard
+import ManageOrders from '../pages/Dashboard/AdminOrders/ManageOrders';
+import AdminProducts from '../pages/Dashboard/AdminProducts/AdminProducts';
+import AdminProfile from '../pages/Dashboard/AdminProfile/AdminProfile';
 
-// Rutas Protegidas
+// --- COMPONENTES DE RUTAS ---
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
 
+// --- Componente Intermediario para el Layout Público ---
+// Este componente envuelve todas las páginas que usan el Navbar y Footer.
+const MainLayoutWrapper = () => (
+  <>
+    <Navbar />
+    <CartSidebar />
+    <main>
+      <Outlet /> {/* Aquí se renderizarán las páginas anidadas */}
+    </main>
+    <Footer />
+  </>
+);
+
 const AppRouter = () => {
   return (
-    <>
-      <Navbar />
-      <CartSidebar />
-      <main>
-        <Routes>
-          {/* Rutas Públicas */}
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<ProductCatalog />} />
-          <Route path="/products/:productId" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/payment-failure" element={<PaymentFailure />} />
-          
-          {/* Rutas Protegidas para usuarios logueados */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/checkout" element={<Checkout />} />
-          </Route>
-          
-          {/* Rutas Protegidas solo para Administradores */}
-          <Route path="/admin" element={<AdminRoute />}>
-            <Route element={<AdminLayout />}>
-              <Route index element={<Navigate to="/admin/products" replace />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="profile" element={<AdminProfile />} />
-              <Route path="orders" element={<AdminOrders />} />
-            </Route>
-          </Route>
-        </Routes>
-      </main>
-      <Footer />
-    </>
+    <Routes>
+      {/* --- GRUPO DE RUTAS PÚBLICAS Y DE USUARIO --- */}
+      <Route element={<MainLayoutWrapper />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<ProductCatalog />} />
+        <Route path="/products/:productId" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-failure" element={<PaymentFailure />} />
+        
+        <Route element={<ProtectedRoute />}>
+          <Route path="/checkout" element={<Checkout />} />
+        </Route>
+      </Route>
+
+      {/* --- GRUPO DE RUTAS DE ADMINISTRADOR --- */}
+      <Route path="/admin" element={<AdminRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route index element={<Navigate to="orders" replace />} />
+          <Route path="orders" element={<ManageOrders />} /> 
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="profile" element={<AdminProfile />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 };
 
