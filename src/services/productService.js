@@ -1,4 +1,5 @@
-// La URL base de tu API desplegada en Render
+// src/services/productService.js
+
 const BASE_URL = 'https://backend-genezis.onrender.com/api';
 
 /**
@@ -8,18 +9,36 @@ const BASE_URL = 'https://backend-genezis.onrender.com/api';
 export const getAllProducts = async () => {
   try {
     const response = await fetch(`${BASE_URL}/products`);
-    
-    // Si la respuesta no es exitosa (ej. status 404 o 500), lanzamos un error.
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
     const data = await response.json();
     return data;
   } catch (error) {
-    // Capturamos cualquier error (de red o lanzado por nosotros) y lo mostramos en consola.
     console.error("Error fetching products:", error);
-    // Relanzamos el error para que el componente que llama a esta función pueda manejarlo.
+    throw error;
+  }
+};
+
+/**
+ * Obtiene un solo producto por su ID.
+ * @param {string | number} id El ID del producto a obtener.
+ * @returns {Promise<Object>} Una promesa que resuelve al objeto del producto.
+ */
+export const getProductById = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/products/${id}`);
+    if (!response.ok) {
+      // Si el producto no se encuentra, la API debería devolver un 404.
+      if (response.status === 404) {
+        throw new Error('Producto no encontrado');
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Error fetching product with id ${id}:`, error);
     throw error;
   }
 };
