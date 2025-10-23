@@ -12,7 +12,21 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  h1 { font-size: 2rem; }
+  flex-wrap: wrap; // Para mejor responsividad
+  gap: 1rem;
+
+  h1 { 
+    font-size: 2rem; 
+  }
+
+  // Contenedor para los botones de la derecha
+  div {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  // Botón principal de creación
   button {
     background-color: $primary-color;
     color: $light-text;
@@ -21,7 +35,23 @@
     border-radius: 4px;
     font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.2s ease;
     &:hover { background-color: color.adjust($primary-color, $lightness: -10%); }
+  }
+
+  // Enlace a la página de perfil
+  .profile-link {
+    color: $secondary-text;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: color.adjust($dark-card-bg, $lightness: 5%);
+      color: $primary-color;
+    }
   }
 }
 
@@ -30,6 +60,7 @@
   background-color: $dark-card-bg;
   border-radius: 8px;
   padding: 1rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 table {
@@ -39,9 +70,20 @@ table {
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid color.adjust($dark-bg, $lightness: 10%);
+    vertical-align: middle;
   }
-  th { font-size: 0.9rem; color: $secondary-text; text-transform: uppercase; }
-  tbody tr:hover { background-color: color.adjust($dark-card-bg, $lightness: 3%); }
+  th { 
+    font-size: 0.9rem; 
+    color: $secondary-text; 
+    text-transform: uppercase; 
+    font-weight: 600;
+  }
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+  tbody tr:hover { 
+    background-color: color.adjust($dark-card-bg, $lightness: 3%); 
+  }
 }
 
 .actions-cell {
@@ -54,7 +96,12 @@ table {
     padding: 0.3rem 0.7rem;
     border-radius: 4px;
     cursor: pointer;
-    &:hover { border-color: $primary-color; color: $primary-color; }
+    transition: all 0.2s ease;
+    &:hover { 
+      border-color: $primary-color; 
+      color: $primary-color;
+      background-color: color.adjust($primary-color, $alpha: -0.9);
+    }
   }
 }
 
@@ -67,6 +114,7 @@ table {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 1rem;
 }
 .modal-content {
   background-color: $dark-card-bg;
@@ -74,11 +122,20 @@ table {
   border-radius: 8px;
   width: 90%;
   max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
   h2 { margin-bottom: 1.5rem; }
 }
 
 form .form-group { margin-bottom: 1rem; }
-form .form-row { display: flex; gap: 1rem; }
+form .form-row { 
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  @media(min-width: $breakpoint-sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 form label { display: block; margin-bottom: 0.5rem; }
 form input, form textarea, form select {
   width: 100%;
@@ -87,6 +144,7 @@ form input, form textarea, form select {
   border: 1px solid color.adjust($dark-bg, $lightness: 15%);
   border-radius: 4px;
   color: $light-text;
+  font-size: 1rem;
 }
 form .form-actions {
   margin-top: 1.5rem;
@@ -96,8 +154,18 @@ form .form-actions {
   button {
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
+    font-weight: 600;
     cursor: pointer;
-    &[type="submit"] { background-color: $primary-color; color: $light-text; border: none; }
-    &[type="button"] { background: none; border: 1px solid $secondary-text; color: $secondary-text; }
+    border: none;
+    &[type="submit"] { 
+      background-color: $primary-color; 
+      color: $light-text;
+      &:hover { background-color: color.adjust($primary-color, $lightness: -10%); }
+    }
+    &[type="button"] { 
+      background-color: color.adjust($dark-card-bg, $lightness: 10%);
+      color: $light-text;
+      &:hover { background-color: color.adjust($dark-card-bg, $lightness: 15%); }
+    }
   }
 }

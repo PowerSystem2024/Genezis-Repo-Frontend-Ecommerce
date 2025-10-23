@@ -1,56 +1,78 @@
 const BASE_URL = 'https://backend-genezis.onrender.com/api';
 
 /**
- * Una función wrapper para 'fetch' que incluye automáticamente el token de autenticación.
- * @param {string} endpoint El endpoint de la API al que se va a llamar (ej. '/checkout/create_preference').
+ * Una función wrapper para 'fetch' que incluye automáticamente el token de autenticación para peticiones JSON.
+ * @param {string} endpoint El endpoint de la API al que se va a llamar.
  * @param {object} options Opciones de configuración para fetch (method, body, etc.).
  * @returns {Promise<any>} La respuesta de la API en formato JSON.
  */
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  // 1. Intentamos leer el token del localStorage.
   const token = localStorage.getItem('token');
   
-  // --- LOG DE DEPURACIÓN #1 ---
-  // Esto nos dirá si estamos encontrando el token.
-  console.log('fetchWithAuth: Token leído de localStorage:', token);
-
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
 
-  // 2. Si encontramos un token, lo añadimos al encabezado de Authorization.
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
-  } else {
-    // Si no hay token, es importante saberlo.
-    console.warn('fetchWithAuth: No se encontró token en localStorage. La petición irá sin autenticación.');
   }
   
   const config = {
     ...options,
     headers,
   };
-  
-  // --- LOG DE DEPURACIÓN #2 ---
-  // Esto nos mostrará los encabezados exactos que se van a enviar.
-  console.log('fetchWithAuth: Enviando petición con la siguiente configuración:', config);
 
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
     
-    // Si la respuesta no es OK, intentamos leer el JSON de error.
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('fetchWithAuth: Error recibido de la API:', errorData);
       throw new Error(errorData.message || `Error en la petición: ${response.statusText}`);
     }
 
-    // Si la respuesta es OK, devolvemos el JSON.
-    return await response.json();
+    // Algunas respuestas (como DELETE) pueden no tener cuerpo, manejamos ese caso.
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+        return await response.json();
+    }
+    return {}; // Devuelve un objeto vacío si no hay JSON
 
   } catch (error) {
-    console.error('fetchWithAuth: Fallo en la petición fetch o al procesar la respuesta.', error);
-    throw error; // Relanzamos el error para que el componente que llama lo pueda manejar.
+    console.error(`Fallo en la petición a ${endpoint}:`, error);
+    throw error;
+  }
+};
+
+
+/**
+ * Una función wrapper para 'fetch' que maneja la subida de archivos (FormData).
+ * @param {string} endpoint El endpoint de la API al que se va a llamar.
+ * @param {FormData} formData El objeto FormData que contiene el archivo.
+ * @returns {Promise<any>} La respuesta de la API en formato JSON.
+ */
+export const fetchWithAuthFormData = async (endpoint, formData) => {
+  const token = localStorage.getItem('token');
+  
+  const headers = {}; // ¡No se establece Content-Type, el navegador lo hace!
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      method: 'PUT', // Generalmente PUT o POST para subidas
+      headers: headers,
+      body: formData, // Se envía el objeto FormData directamente
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || `Error en la subida de archivo a ${endpoint}`);
+    }
+    return data;
+  } catch (error) {
+    console.error(`Fallo en la subida de archivo a ${endpoint}:`, error);
+    throw error;
   }
 };

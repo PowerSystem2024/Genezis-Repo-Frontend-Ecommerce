@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Asegúrate de que Link esté importado
 import { getAllProducts, createProduct, updateProduct, deleteProduct } from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
 import './AdminProducts.scss';
 
 // --- Subcomponente del Formulario (Modal) ---
 const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
-  // Función para inicializar el estado del formulario de forma segura
   const getInitialState = () => {
     if (!currentProduct) {
       return { name: '', description: '', price: '', stock: '', coverImageURL: '', categoryID: '' };
     }
-    // Traduce los nombres de las propiedades del listado de productos
-    // al formato que espera el formulario y la API de guardado.
     return {
       ...currentProduct,
-      coverImageURL: currentProduct.coverimageurl || '', // de lowercase a camelCase
-      categoryID: currentProduct.categoryid || '',       // de lowercase a camelCase
+      coverImageURL: currentProduct.coverimageurl || '',
+      categoryID: currentProduct.categoryid || '',
     };
   };
   
@@ -113,11 +111,9 @@ const AdminProducts = () => {
     try {
       if (productData.id) {
         await updateProduct(productData.id, productData);
-        // Al actualizar, reemplazamos el producto antiguo con el nuevo en la UI
         setProducts(products.map(p => (p.id === productData.id ? productData : p)));
       } else {
         const created = await createProduct(productData);
-        // Añadimos el nuevo producto a la lista en la UI
         setProducts([...products, created]);
       }
       setIsFormOpen(false);
@@ -145,9 +141,12 @@ const AdminProducts = () => {
     <div className="admin-products-container">
       <div className="admin-header">
         <h1>Gestión de Productos</h1>
-        <button onClick={() => { setCurrentProduct(null); setIsFormOpen(true); }}>
-          + Crear Producto
-        </button>
+        <div> {/* Contenedor para los botones */}
+          <Link to="/admin/profile" className="profile-link">Mi Perfil</Link>
+          <button onClick={() => { setCurrentProduct(null); setIsFormOpen(true); }}>
+            + Crear Producto
+          </button>
+        </div>
       </div>
 
       {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}

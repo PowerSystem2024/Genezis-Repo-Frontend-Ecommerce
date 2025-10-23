@@ -17,6 +17,7 @@ import Checkout from '../pages/Checkout/Checkout';
 import PaymentSuccess from '../pages/PaymentStatus/PaymentSuccess';
 import PaymentFailure from '../pages/PaymentStatus/PaymentFailure';
 import AdminProducts from '../pages/Admin/AdminProducts';
+import AdminProfile from '../pages/Admin/AdminProfile'; // Importar nueva página
 
 // Rutas Protegidas
 import ProtectedRoute from './ProtectedRoute';
@@ -47,6 +48,7 @@ const AppRouter = () => {
           {/* Rutas Protegidas solo para Administradores */}
           <Route element={<AdminRoute />}>
             <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/profile" element={<AdminProfile />} />
           </Route>
         </Routes>
       </main>
