@@ -5,7 +5,6 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import AdminLayout from '../pages/Dashboard/AdminLayout/AdminLayout';
 
 // --- COMPONENTES DE LAYOUT PÚBLICO ---
-// No los importamos como un layout separado, sino los componentes que lo forman
 import Navbar from '../components/common/Navbar/Navbar';
 import Footer from '../components/common/Footer/Footer';
 import CartSidebar from '../components/common/CartSidebar/CartSidebar';
@@ -22,23 +21,24 @@ import PaymentSuccess from '../pages/PaymentStatus/PaymentSuccess';
 import PaymentFailure from '../pages/PaymentStatus/PaymentFailure';
 
 // --- PÁGINAS DE ADMINISTRACIÓN ---
-// Las páginas del área de administración se movieron a pages/Dashboard
 import ManageOrders from '../pages/Dashboard/ManageOrders/ManageOrders';
 import AdminProducts from '../pages/Dashboard/AdminProducts/AdminProducts';
 import AdminProfile from '../pages/Dashboard/AdminProfile/AdminProfile';
+// --- 1. IMPORTAR LA NUEVA PÁGINA ---
+import ManageUsers from '../pages/Dashboard/AdminUsers/ManageUsers';
+
 
 // --- COMPONENTES DE RUTAS ---
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
 
 // --- Componente Intermediario para el Layout Público ---
-// Este componente envuelve todas las páginas que usan el Navbar y Footer.
 const MainLayoutWrapper = () => (
   <>
     <Navbar />
     <CartSidebar />
     <main>
-      <Outlet /> {/* Aquí se renderizarán las páginas anidadas */}
+      <Outlet />
     </main>
     <Footer />
   </>
@@ -70,6 +70,8 @@ const AppRouter = () => {
           <Route path="orders" element={<ManageOrders />} /> 
           <Route path="products" element={<AdminProducts />} />
           <Route path="profile" element={<AdminProfile />} />
+          {/* --- 2. AÑADIR LA NUEVA RUTA --- */}
+          <Route path="users" element={<ManageUsers />} />
         </Route>
       </Route>
     </Routes>

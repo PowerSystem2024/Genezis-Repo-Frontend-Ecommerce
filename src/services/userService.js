@@ -1,5 +1,41 @@
 import { fetchWithAuth } from './api';
 
+// --- NUEVA FUNCIÓN ---
+/**
+ * Obtiene una lista de todos los usuarios (solo para Admin).
+ * Basado en el endpoint: GET /api/users
+ * @returns {Promise<Array>} Un array de objetos de usuario.
+ */
+export const getAllUsers = async () => {
+  try {
+    const data = await fetchWithAuth('/users');
+    return data;
+  } catch (error) {
+    console.error('Error al obtener todos los usuarios:', error);
+    throw error;
+  }
+};
+
+// --- NUEVA FUNCIÓN ---
+/**
+ * Desactiva un usuario (borrado lógico, solo para Admin).
+ * Basado en el endpoint: DELETE /api/users/{id}
+ * @param {number|string} userId El ID del usuario a desactivar.
+ * @returns {Promise<object>} Un mensaje de éxito.
+ */
+export const deactivateUser = async (userId) => {
+  try {
+    const data = await fetchWithAuth(`/users/${userId}`, {
+      method: 'DELETE',
+    });
+    return data;
+  } catch (error) {
+    console.error(`Error al desactivar el usuario ${userId}:`, error);
+    throw error;
+  }
+};
+
+
 /**
  * Actualiza los detalles del perfil del usuario (nombre y apellido).
  * Basado en el endpoint: PATCH /api/users/profile/details
@@ -8,14 +44,14 @@ import { fetchWithAuth } from './api';
  */
 export const updateUserProfile = async (profileData) => {
   try {
-    // El payload ya está en camelCase, perfecto para la API.
     const response = await fetchWithAuth('/users/profile/details', {
       method: 'PATCH',
       body: JSON.stringify(profileData),
     });
-    // La API devuelve una estructura { user: {...} }, extraemos el objeto user.
-    // Asumimos que la respuesta del update también puede venir con minúsculas y la normalizamos
+    // Normalizamos la respuesta para asegurar que el frontend siempre reciba camelCase
     const returnedUser = response.user;
+    if (!returnedUser) throw new Error("La respuesta de la API no contenía el objeto de usuario.");
+    
     return {
         id: returnedUser.id,
         firstName: returnedUser.firstname || returnedUser.firstName,

@@ -1,0 +1,85 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+.manage-users-page {
+  .page-header {
+    margin-bottom: 2.5rem;
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+  }
+
+  .table-container {
+    background-color: $dark-card-bg;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    overflow-x: auto;
+  }
+
+  .users-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+    color: $light-text;
+
+    thead th {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      font-size: 0.8rem;
+      color: $secondary-text;
+      text-transform: uppercase;
+      border-bottom: 1px solid color.adjust($dark-bg, $lightness: 10%);
+    }
+
+    tbody td {
+      padding: 1.25rem 1.5rem;
+      vertical-align: middle;
+    }
+
+    .cell-id { font-weight: 700; }
+    .cell-name { text-transform: capitalize; }
+    
+    .cell-actions {
+      text-align: right;
+      .action-btn {
+        background: none;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        color: $secondary-text;
+        font-size: 1.1rem;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        &.delete-btn:hover {
+          background-color: rgba(239, 68, 68, 0.1);
+          color: #ef4444;
+          border-color: #ef4444;
+        }
+      }
+    }
+  }
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+
+  &.role--admin {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+  &.role--customer {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+  }
+}
