@@ -1,0 +1,111 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+.modal-overlay {
+  position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.7);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000; padding: 1rem;
+}
+
+.modal-content {
+  background-color: $dark-card-bg; border-radius: 8px;
+  width: 100%; max-height: 90vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  &.large { max-width: 900px; }
+}
+
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 2rem; border-bottom: 1px solid color.adjust($dark-bg, $lightness: 10%);
+  flex-shrink: 0;
+  h2 { font-size: 1.5rem; }
+  .close-btn { background: none; border: none; font-size: 1.5rem; color: $secondary-text; cursor: pointer; &:hover { color: $light-text; } }
+  .download-btn {
+    background-color: $primary-color; color: $light-text; border: none; padding: 0.6rem 1.2rem;
+    border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+    &:hover { background-color: color.adjust($primary-color, $lightness: -10%); }
+  }
+}
+
+.modal-body {
+  padding: 0; overflow-y: auto;
+  p { padding: 2rem; text-align: center; }
+}
+
+// --- ESTILOS DE FACTURA TIPO A ---
+
+.invoice-container.a4-style {
+  padding: 2.5rem; background-color: white; color: #111827;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.invoice-header-a4 {
+  display: flex; justify-content: space-between;
+  margin-bottom: 2.5rem;
+
+  .seller-details {
+    p { padding: 0; margin: 2px 0; font-size: 0.9rem; text-align: left; }
+  }
+  
+  .invoice-logo {
+    max-width: 100px; // Logo más pequeño y profesional
+    margin-bottom: 1rem;
+  }
+
+  .invoice-title-box {
+    border: 2px solid #111827;
+    display: flex;
+    align-items: center;
+
+    .invoice-type {
+      font-size: 3rem; font-weight: 700;
+      padding: 0 1.5rem;
+      border-right: 2px solid #111827;
+      height: 100%;
+      display: flex; align-items: center;
+    }
+    
+    div:last-child {
+      padding: 0.5rem 1.5rem;
+      h1 { font-size: 2.2rem; margin: 0; }
+      p { padding: 0; margin: 4px 0; text-align: left; }
+    }
+  }
+}
+
+.customer-details-a4 {
+  border: 1px solid #d1d5db; border-radius: 6px;
+  padding: 1rem; margin-bottom: 2.5rem;
+  line-height: 1.6;
+  p { padding: 0; margin: 4px 0; text-align: left; }
+}
+
+.items-table.a4-style {
+  width: 100%; border-collapse: collapse; margin-bottom: 2rem;
+  font-size: 0.9rem;
+
+  th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid #d1d5db; }
+  
+  thead {
+    background-color: #f3f4f6;
+    th { font-weight: 600; color: #374151; text-transform: uppercase; font-size: 0.75rem; }
+  }
+  
+  tbody tr:last-child td { border-bottom: 2px solid #111827; }
+
+  tfoot {
+    font-size: 1.2rem;
+    font-weight: 700;
+    .total-label { text-align: right; border-bottom: none; }
+    .total-amount { color: #111827; border-bottom: none; }
+  }
+}
+
+.invoice-footer-a4 {
+  margin-top: 2.5rem; padding-top: 1rem;
+  border-top: 1px solid #d1d5db;
+  text-align: center; color: #6b7280; font-size: 0.8rem;
+  p { padding: 0; margin: 2px 0; }
+}

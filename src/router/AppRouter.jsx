@@ -23,7 +23,7 @@ import PaymentFailure from '../pages/PaymentStatus/PaymentFailure';
 
 // --- PÁGINAS DE ADMINISTRACIÓN ---
 // Las páginas del área de administración se movieron a pages/Dashboard
-import ManageOrders from '../pages/Dashboard/AdminOrders/ManageOrders';
+import ManageOrders from '../pages/Dashboard/ManageOrders/ManageOrders';
 import AdminProducts from '../pages/Dashboard/AdminProducts/AdminProducts';
 import AdminProfile from '../pages/Dashboard/AdminProfile/AdminProfile';
 
