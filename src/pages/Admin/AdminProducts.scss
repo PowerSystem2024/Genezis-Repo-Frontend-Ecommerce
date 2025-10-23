@@ -12,21 +12,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  flex-wrap: wrap; // Para mejor responsividad
+  flex-wrap: wrap;
   gap: 1rem;
 
-  h1 { 
-    font-size: 2rem; 
-  }
-
-  // Contenedor para los botones de la derecha
-  div {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  // Botón principal de creación
+  h1 { font-size: 2rem; }
+  div { display: flex; gap: 1rem; align-items: center; }
   button {
     background-color: $primary-color;
     color: $light-text;
@@ -38,25 +28,10 @@
     transition: background-color 0.2s ease;
     &:hover { background-color: color.adjust($primary-color, $lightness: -10%); }
   }
-
-  // Enlace a la página de perfil
-  .profile-link {
-    color: $secondary-text;
-    font-weight: 600;
-    text-decoration: none;
-    padding: 0.75rem 1rem;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background-color: color.adjust($dark-card-bg, $lightness: 5%);
-      color: $primary-color;
-    }
-  }
 }
 
 .table-wrapper {
-  overflow-x: auto; // Para responsividad en tablas
+  overflow-x: auto;
   background-color: $dark-card-bg;
   border-radius: 8px;
   padding: 1rem;
@@ -78,12 +53,20 @@ table {
     text-transform: uppercase; 
     font-weight: 600;
   }
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-  tbody tr:hover { 
-    background-color: color.adjust($dark-card-bg, $lightness: 3%); 
-  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background-color: color.adjust($dark-card-bg, $lightness: 3%); }
+}
+
+// --- ESTILOS DE IMAGEN EN LA TABLA ---
+.image-cell {
+  width: 150px; // Dar un ancho fijo a la celda de la imagen
+}
+.product-table-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover; // La magia está aquí: recorta la imagen para que encaje
+  border-radius: 8px;
+  background-color: $dark-bg; // Fondo mientras carga la imagen
 }
 
 .actions-cell {
@@ -105,36 +88,73 @@ table {
   }
 }
 
-// Estilos del Modal y Formulario
+// --- ESTILOS DEL MODAL Y FORMULARIO ---
 .modal-overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(0,0,0,0.7);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; // Alinear arriba para ver mejor en móvil
   z-index: 1000;
-  padding: 1rem;
+  padding: 2rem 1rem;
+  overflow-y: auto; // Permitir scroll en el overlay
 }
 .modal-content {
   background-color: $dark-card-bg;
   padding: 2rem;
   border-radius: 8px;
-  width: 90%;
+  width: 100%;
   max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
   h2 { margin-bottom: 1.5rem; }
+}
+
+.image-uploader {
+  width: 100%;
+  margin-bottom: 1rem;
+  .upload-area {
+    display: block;
+    width: 100%;
+    border: 2px dashed color.adjust($dark-card-bg, $lightness: 15%);
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: $dark-bg;
+    transition: border-color 0.2s, background-color 0.2s;
+
+    &:hover {
+      border-color: $primary-color;
+    }
+  }
+  
+  .upload-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: $secondary-text;
+    height: 250px; // Altura fija para el área de subida
+
+    svg {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .image-preview {
+    width: 100%;
+    aspect-ratio: 16 / 9; // Proporción 16:9 para la imagen
+    object-fit: cover; // Recorta la imagen para que llene el contenedor
+    border-radius: 6px; // Un radio ligeramente menor que el del contenedor
+    display: block; // Importante para evitar espacios extra
+  }
 }
 
 form .form-group { margin-bottom: 1rem; }
 form .form-row { 
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  @media(min-width: $breakpoint-sm) {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 form label { display: block; margin-bottom: 0.5rem; }
 form input, form textarea, form select {
@@ -152,11 +172,12 @@ form .form-actions {
   justify-content: flex-end;
   gap: 1rem;
   button {
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1.5rem; // <-- igual para ambos botones
     border-radius: 4px;
     font-weight: 600;
     cursor: pointer;
     border: none;
+    // Estilos para ambos botones, diferenciando solo por tipo
     &[type="submit"] { 
       background-color: $primary-color; 
       color: $light-text;

@@ -27,15 +27,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (credentials) => {
-    // Esta función está esperando exactamente la respuesta que tu API ahora provee
     const data = await loginUser(credentials);
     
-    // Esta validación ahora será exitosa
     if (data.user && data.token) {
+      // --- CORRECCIÓN CLAVE AQUÍ ---
+      // Eliminamos la capa de normalización. Usamos el objeto 'data.user' directamente
+      // ya que el backend ahora nos lo entrega en el formato camelCase correcto.
+      
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user)); // Guardamos el objeto 'user' completo
+      localStorage.setItem('user', JSON.stringify(data.user)); // Guardamos el objeto user tal como viene
       setToken(data.token);
-      setUser(data.user); // Establecemos el objeto 'user' en el estado
+      setUser(data.user); // Establecemos el objeto user tal como viene
     } else {
       throw new Error('Respuesta de login inválida desde el servidor.');
     }
@@ -52,9 +54,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const updateUserState = (updatedUserData) => {
+    // Aquí también asumimos que la respuesta de actualización vendrá en camelCase
+    setUser(updatedUserData);
+    localStorage.setItem('user', JSON.stringify(updatedUserData));
+  };
+
   const isAuthenticated = !!token;
 
-  const value = { user, token, isAuthenticated, loading, login, register, logout };
+  const value = { user, token, isAuthenticated, loading, login, register, logout, updateUserState };
 
   return (
     <AuthContext.Provider value={value}>
@@ -63,7 +71,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

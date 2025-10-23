@@ -1,0 +1,82 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+.product-card-home {
+  background-color: $dark-card-bg;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-0.5rem);
+  }
+
+  .card-image-link {
+    display: block;
+    position: relative;
+  }
+  
+  .card-image {
+    width: 100%;
+    height: 14rem;
+    object-fit: cover;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+  
+  .card-category {
+    color: $secondary-text;
+    font-size: 0.875rem;
+  }
+  
+  .card-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-top: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: $light-text;
+    a {
+      color: inherit;
+      text-decoration: none;
+      &:hover { color: $primary-color; }
+    }
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  
+  .card-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $primary-color;
+  }
+
+  .add-to-cart-btn {
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+    padding: 0.5rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    
+    svg { font-size: 1.25rem; }
+
+    &:hover {
+      background-color: $primary-color;
+      color: white;
+    }
+  }
+}

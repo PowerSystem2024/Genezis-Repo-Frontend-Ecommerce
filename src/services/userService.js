@@ -1,28 +1,54 @@
-import { fetchWithAuth, fetchWithAuthFormData } from './api';
+import { fetchWithAuth } from './api';
 
 /**
- * Actualiza los datos del perfil del usuario (nombre, email, etc.).
- * @param {object} userData - Objeto con los datos a actualizar.
- * @returns {Promise<object>} El objeto de usuario actualizado.
+ * Actualiza los detalles del perfil del usuario (nombre y apellido).
+ * Basado en el endpoint: PATCH /api/users/profile/details
+ * @param {object} profileData - Un objeto con { firstName, lastName }.
+ * @returns {Promise<object>} El objeto de usuario actualizado devuelto por la API.
  */
-export const updateUserProfile = async (userData) => {
-  // Asumiendo que el endpoint es PUT /api/users/profile
-  return await fetchWithAuth('/users/profile', {
-    method: 'PUT',
-    body: JSON.stringify(userData),
-  });
+export const updateUserProfile = async (profileData) => {
+  try {
+    // El payload ya está en camelCase, perfecto para la API.
+    const response = await fetchWithAuth('/users/profile/details', {
+      method: 'PATCH',
+      body: JSON.stringify(profileData),
+    });
+    // La API devuelve una estructura { user: {...} }, extraemos el objeto user.
+    // Asumimos que la respuesta del update también puede venir con minúsculas y la normalizamos
+    const returnedUser = response.user;
+    return {
+        id: returnedUser.id,
+        firstName: returnedUser.firstname || returnedUser.firstName,
+        lastName: returnedUser.lastname || returnedUser.lastName,
+        email: returnedUser.email,
+        role: returnedUser.role
+    };
+  } catch (error) {
+    console.error('Error al actualizar el perfil:', error);
+    throw error;
+  }
 };
 
 /**
- * Sube y actualiza el avatar del usuario.
- * @param {File} avatarFile - El archivo de imagen seleccionado.
- * @returns {Promise<object>} El objeto de usuario actualizado con la nueva URL del avatar.
+ * Cambia la contraseña del usuario autenticado.
+ * Basado en el endpoint: PATCH /api/users/profile/password
+ * @param {object} passwordData - Un objeto con { currentPassword, newPassword }.
+ * @returns {Promise<object>} Un mensaje de éxito.
  */
-export const updateUserAvatar = async (avatarFile) => {
-  const formData = new FormData();
-  // 'avatar' debe ser el nombre del campo que tu backend espera para el archivo.
-  formData.append('avatar', avatarFile);
+export const changeUserPassword = async (passwordData) => {
+  const payload = {
+    currentPassword: passwordData.currentPassword,
+    newPassword: passwordData.newPassword,
+  };
 
-  // Asumiendo que el endpoint es PUT /api/users/profile/avatar
-  return await fetchWithAuthFormData('/users/profile/avatar', formData);
+  try {
+    const response = await fetchWithAuth('/users/profile/password', {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al cambiar la contraseña:', error);
+    throw error;
+  }
 };

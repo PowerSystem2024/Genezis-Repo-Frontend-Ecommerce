@@ -1,0 +1,155 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+@use '../AdminProducts.scss'; // Reutilizamos estilos base del panel de admin
+
+.admin-orders-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem 2rem;
+}
+
+.status-select {
+  /* Centrado horizontal y vertical */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* Altura y line-height para asegurar centrado vertical en distintos navegadores */
+  height: 2.25rem;
+  line-height: 2.25rem;
+
+  /* Ajustes de espaciado */
+  padding: 0 0.5rem;
+  border: none;
+  background-color: transparent;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Opcional: asegurar un ancho mínimo para que el texto no quede muy pegado */
+  min-width: 110px;
+
+  &.status-paid { background-color: rgba(74, 222, 128, 0.2); color: #4ade80; }
+  &.status-pending { background-color: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+  &.status-shipped { background-color: rgba(96, 165, 250, 0.2); color: #60a5fa; }
+  &.status-delivered { background-color: rgba(167, 139, 250, 0.2); color: #a78bfa; }
+  &.status-cancelled { background-color: rgba(248, 113, 113, 0.2); color: #f87171; }
+}
+
+// --- ESTILOS PARA EL NUEVO FORMULARIO ---
+.modal-content.large {
+  max-width: 800px;
+}
+
+.order-form {
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    @media (min-width: $breakpoint-sm) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+    label { display: block; margin-bottom: 0.5rem; color: $secondary-text; }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: $dark-bg;
+      border: 1px solid color.adjust($dark-bg, $lightness: 15%);
+      border-radius: 4px;
+      color: $light-text;
+      font-size: 1rem;
+    }
+  }
+  
+  .form-divider {
+    border: none;
+    border-top: 1px solid color.adjust($dark-bg, $lightness: 10%);
+    margin: 2rem 0;
+  }
+  
+  h4 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: $light-text;
+  }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .remove-item-btn {
+    background: none;
+    border: 1px solid color.adjust($dark-card-bg, $lightness: 15%);
+    color: $secondary-text;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover:not(:disabled) {
+      background-color: color.adjust(#f87171, $alpha: -0.8);
+      color: #f87171;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .add-item-btn {
+    background: none;
+    border: 1px dashed $primary-color;
+    color: $primary-color;
+    padding: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .form-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    
+    .submit-btn {
+      background-color: $primary-color;
+      color: $light-text;
+    }
+    
+    .cancel-btn {
+      background-color: color.adjust($dark-card-bg, $lightness: 10%);
+      color: $light-text;
+    }
+    
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+}

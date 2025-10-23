@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { 
   getAllProducts, 
   createProduct, 
   updateProduct, 
   deleteProduct, 
-  updateProductImage 
 } from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
 import { FiUploadCloud } from 'react-icons/fi';
@@ -14,7 +12,6 @@ import './AdminProducts.scss';
 // --- Subcomponente del Formulario (Modal) ---
 const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
   const [product, setProduct] = useState(() => {
-    // ¡CORRECCIÓN IMPORTANTE! El backend espera 'categoryID'
     const initialState = { name: '', description: '', price: '', stock: '', categoryID: '' };
     if (!currentProduct) return initialState;
     return {
@@ -48,11 +45,11 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>{currentProduct ? 'Editar Producto' : 'Crear Producto'}</h2>
-        <form onSubmit={handleSubmit} className="product-form-grid">
-          <div className="form-group-image">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
             <label>Imagen de Portada</label>
             <div className="image-uploader">
-              <input type="file" id="image-upload" accept="image/*" onChange={handleImageChange} />
+              <input type="file" id="image-upload" accept="image/*" onChange={handleImageChange} style={{display: 'none'}} />
               <label htmlFor="image-upload" className="upload-area">
                 {imagePreview ? (
                   <img src={imagePreview} alt="Vista previa" className="image-preview" />
@@ -66,32 +63,30 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
             </div>
           </div>
 
-          <div className="form-fields">
+          <div className="form-group">
+            <label>Nombre</label>
+            <input type="text" name="name" value={product.name} onChange={handleChange} required />
+          </div>
+          <div className="form-group">
+            <label>Descripción</label>
+            <textarea name="description" value={product.description} onChange={handleChange} />
+          </div>
+          <div className="form-row">
             <div className="form-group">
-              <label>Nombre</label>
-              <input type="text" name="name" value={product.name} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label>Descripción</label>
-              <textarea name="description" value={product.description} onChange={handleChange} />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Precio</label>
-                <input type="number" name="price" value={product.price} onChange={handleChange} required step="0.01" min="0" />
-              </div>
-              <div className="form-group">
-                <label>Stock</label>
-                <input type="number" name="stock" value={product.stock} onChange={handleChange} required min="0" />
-              </div>
+              <label>Precio</label>
+              <input type="number" name="price" value={product.price} onChange={handleChange} required step="0.01" min="0" />
             </div>
             <div className="form-group">
-              <label>Categoría</label>
-              <select name="categoryID" value={product.categoryID} onChange={handleChange} required>
-                <option value="">Seleccione una categoría</option>
-                {Array.isArray(categories) && categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-              </select>
+              <label>Stock</label>
+              <input type="number" name="stock" value={product.stock} onChange={handleChange} required min="0" />
             </div>
+          </div>
+          <div className="form-group">
+            <label>Categoría</label>
+            <select name="categoryID" value={product.categoryID} onChange={handleChange} required>
+              <option value="">Seleccione una categoría</option>
+              {Array.isArray(categories) && categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+            </select>
           </div>
           
           <div className="form-actions">
@@ -118,6 +113,7 @@ const AdminProducts = () => {
   const fetchProducts = async () => {
     try {
       const productsData = await getAllProducts();
+      // Asegurarse de que estamos trabajando con un array
       const productsArray = Array.isArray(productsData) ? productsData : productsData?.products || [];
       setProducts(productsArray);
     } catch (err) {
@@ -130,11 +126,16 @@ const AdminProducts = () => {
     const loadData = async () => {
       setLoading(true);
       setError('');
-      await Promise.all([
-        fetchProducts(),
-        getAllCategories().then(setCategories)
-      ]);
-      setLoading(false);
+      try {
+        await Promise.all([
+          fetchProducts(),
+          getAllCategories().then(setCategories)
+        ]);
+      } catch (err) {
+        setError('Error al cargar datos iniciales.');
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, []);
@@ -143,29 +144,15 @@ const AdminProducts = () => {
     setError('');
     
     try {
-      // --- LÓGICA DE GUARDADO CORREGIDA ---
       if (currentProduct && currentProduct.id) {
-        // --- MODO EDICIÓN ---
-        // 1. Actualizar datos de texto
-        await updateProduct(currentProduct.id, productData);
-        let finalProduct = { ...currentProduct, ...productData };
-
-        // 2. Si se subió una nueva imagen, actualizarla
-        if (imageFile) {
-          const updatedProductWithImage = await updateProductImage(currentProduct.id, imageFile);
-          finalProduct.coverimageurl = updatedProductWithImage.coverimageurl;
-        }
-
-        // 3. Actualizar UI
-        setProducts(products.map(p => (p.id === finalProduct.id ? finalProduct : p)));
+        // --- MODO EDICIÓN UNIFICADO ---
+        const updatedProduct = await updateProduct(currentProduct.id, productData, imageFile);
+        setProducts(products.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
         
       } else {
         // --- MODO CREACIÓN ---
-        // 1. Enviar todo de una vez
         const newProduct = await createProduct(productData, imageFile);
-        
-        // 2. Actualizar UI
-        setProducts([...products, newProduct]);
+        setProducts(prevProducts => [...prevProducts, newProduct]);
       }
 
       setIsFormOpen(false);
@@ -196,7 +183,6 @@ const AdminProducts = () => {
       <div className="admin-header">
         <h1>Gestión de Productos</h1>
         <div>
-          <Link to="/admin/profile" className="profile-link">Mi Perfil</Link>
           <button onClick={() => { setCurrentProduct(null); setIsFormOpen(true); }}>
             + Crear Producto
           </button>
@@ -230,7 +216,7 @@ const AdminProducts = () => {
             {products.map(product => (
               <tr key={product.id}>
                 <td>{product.id}</td>
-                <td>
+                <td className="image-cell">
                   <img src={product.coverimageurl} alt={product.name} className="product-table-image" />
                 </td>
                 <td>{product.name}</td>

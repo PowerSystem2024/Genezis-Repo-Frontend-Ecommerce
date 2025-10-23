@@ -1,162 +1,163 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
+@use 'sass:color';
 
-// --- Hero Section ---
-.hero {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// Estructura general de la página
+// Las secciones manejan su propio color de fondo si es necesario
+
+// Contenedor y cabecera de sección reutilizables
+.container {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.section-header {
   text-align: center;
-  height: 60vh;
-  padding: 2rem;
-  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1528722828614-77b94324e964?q=80&w=1770&auto=format&fit=crop') no-repeat center center/cover;
-  
-  &__title {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+  margin-bottom: 3rem;
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
     color: $light-text;
-
     @media (min-width: $breakpoint-md) {
-      font-size: 4rem;
+      font-size: 2.5rem;
     }
   }
-
-  &__subtitle {
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto 2rem;
+  p {
     color: $secondary-text;
-
-    @media (min-width: $breakpoint-md) {
-      font-size: 1.25rem;
-    }
-  }
-
-  &__cta {
-    background-color: $primary-color;
-    color: $light-text;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background-color 0.2s ease-in-out;
-
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
+    margin-top: 0.5rem;
   }
 }
 
-// --- General Home Section Styling ---
-.home-section {
-  max-width: 1200px;
-  margin: 4rem auto;
-  padding: 0 2rem;
 
-  &__title {
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-}
-
-// --- Product Grid & Card ---
-.product-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 1fr; // 1 columna en mobile
-
+// --- SECCIÓN DE PRODUCTOS DESTACADOS ---
+.featured-products {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
   @media (min-width: $breakpoint-sm) {
-    grid-template-columns: repeat(2, 1fr); // 2 en tablet
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  @media (min-width: $breakpoint-sm) {
+    grid-template-columns: repeat(2, 1fr);
   }
   @media (min-width: $breakpoint-lg) {
-    grid-template-columns: repeat(4, 1fr); // 4 en desktop
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
-
-// --- Category Grid & Card ---
-.category-grid {
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: repeat(2, 1fr);
-
-    @media (min-width: $breakpoint-lg) {
-        grid-template-columns: repeat(5, 1fr);
-    }
-}
-
-.category-card {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    height: 150px;
-    display: flex;
-
-    &__image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-
-    &__overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.3s ease;
-    }
-    
-    &__name {
-        color: $light-text;
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
-
-    &:hover {
-        .category-card__image {
-            transform: scale(1.1);
-        }
-        .category-card__overlay {
-            background: rgba(0, 0, 0, 0.3);
-        }
-    }
-}
-
-// --- CTA Section ---
-.cta-section {
-  max-width: 1200px;
-  margin: 4rem auto;
-  padding: 3rem 2rem;
+// --- SECCIÓN DE CATEGORÍAS ---
+.categories-section {
   background-color: $dark-card-bg;
-  border-radius: 8px;
-  text-align: center;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  @media (min-width: $breakpoint-sm) {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+.category-item {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  height: 12rem;
 
-  &__title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .category-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    h3 {
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
   }
   
-  &__subtitle {
-      color: $secondary-text;
-      max-width: 600px;
-      margin: 0 auto 2rem;
+  &:hover img {
+    transform: scale(1.1);
+  }
+}
+
+// --- SECCIÓN CTA "ARMÁ TU PC" ---
+.cta-section {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  @media (min-width: $breakpoint-sm) {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+.cta-content {
+  background-color: $dark-card-bg;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: $breakpoint-md) {
+    padding: 4rem;
   }
 
-  &__button {
-      border: 1px solid $primary-color;
-      color: $primary-color;
-      background: transparent;
-      padding: 0.75rem 2rem;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.2s ease-in-out;
+  .cta-icon {
+    font-size: 4rem;
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: $light-text;
+    @media (min-width: $breakpoint-md) {
+      font-size: 2.5rem;
+    }
+  }
+  p {
+    color: $secondary-text;
+    margin-top: 1rem;
+    max-width: 40rem;
+  }
+  .cta-button {
+    margin-top: 2rem;
+    background-color: $primary-color;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
 
-      &:hover {
-          background-color: $primary-color;
-          color: $light-text;
-      }
+    &:hover {
+      background-color: color.adjust($primary-color, $lightness: -10%);
+    }
   }
 }

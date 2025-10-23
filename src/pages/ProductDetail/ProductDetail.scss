@@ -1,4 +1,5 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
+@use 'sass:color';
 
 .status-message {
   text-align: center;
@@ -11,7 +12,7 @@
 
 .product-detail {
   &__container {
-    max-width: 1000px;
+    max-width: 1100px; // Aumentamos un poco el ancho para dar más espacio
     margin: 3rem auto;
     padding: 0 2rem;
   }
@@ -20,24 +21,35 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
+    align-items: flex-start; // Alinea los items al principio
     
     @media (min-width: $breakpoint-md) {
-      grid-template-columns: 1fr 1fr;
+      // Damos más espacio a la imagen en desktop
+      grid-template-columns: 3fr 2fr; 
       gap: 3rem;
     }
   }
 
+  // --- CONTENEDOR DE LA IMAGEN (CAMBIOS CLAVE) ---
   &__image-container {
     background-color: $dark-card-bg;
     border-radius: 8px;
     padding: 1rem;
-    
+    width: 100%;
+    position: sticky; // Para que la imagen se quede fija al hacer scroll en desktop
+    top: 80px; // Espacio desde el navbar
+
     img {
+      display: block; // Elimina espacio extra debajo de la imagen
       width: 100%;
-      height: auto;
-      max-height: 450px;
-      object-fit: contain;
+      height: auto; // La altura se define por el aspect-ratio
+      
+      // La magia está aquí:
+      aspect-ratio: 16/9; // Fuerza una proporción cuadrada (puedes cambiar a 4 / 3 si prefieres)
+      object-fit: cover;   // Recorta la imagen para que llene el contenedor sin deformarse
+      
       border-radius: 4px;
+      background-color: $dark-bg; // Fondo mientras carga
     }
   }
 
@@ -108,7 +120,7 @@
     transition: background-color 0.2s ease;
 
     &:hover:not(:disabled) {
-      background-color: darken($primary-color, 10%);
+      background-color: color.adjust($primary-color, $lightness: -10%);
     }
 
     &:disabled {

@@ -1,77 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { updateUserProfile, updateUserAvatar } from '../../services/userService';
-import { FiCamera } from 'react-icons/fi';
+import { updateUserProfile, changeUserPassword } from '../../services/userService';
 import './AdminProfile.scss';
 
 const AdminProfile = () => {
-  const { user, login } = useAuth();
-  const [formData, setFormData] = useState({ firstname: '', lastname: '', email: '' });
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState('');
+  const { user, updateUserState } = useAuth();
   
-  const [loadingDetails, setLoadingDetails] = useState(false);
-  const [loadingAvatar, setLoadingAvatar] = useState(false);
-  const [message, setMessage] = useState('');
+  // Estado para el formulario de detalles, usando camelCase
+  const [detailsForm, setDetailsForm] = useState({ firstName: '', lastName: '' });
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [detailsMessage, setDetailsMessage] = useState({ type: '', text: '' });
+  
+  // Estado para el formulario de contraseña
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' });
 
-  // Sincroniza el formulario con los datos del usuario del contexto
+  // Efecto para popular el formulario con los datos del usuario del contexto
   useEffect(() => {
+    // El 'user' del contexto ahora siempre estará en camelCase gracias a la normalización
     if (user) {
-      setFormData({
-        firstname: user.firstname || '',
-        lastname: user.lastname || '',
-        email: user.email || '',
+      setDetailsForm({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
       });
-      setAvatarPreview(user.avatarUrl || `https://ui-avatars.com/api/?name=${user.firstname}+${user.lastname}&background=3b82f6&color=fff`);
     }
   }, [user]);
 
-  // Maneja cambios en los inputs de texto
   const handleDetailsChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setDetailsForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Maneja la selección de un archivo de imagen
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file)); // Crea una URL local para la previsualización
-    }
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordForm(prev => ({ ...prev, [name]: value }));
   };
 
   // Envía la actualización de los detalles del perfil
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
-    setLoadingDetails(true);
-    setMessage('');
+    setDetailsLoading(true);
+    setDetailsMessage({ type: '', text: '' });
     try {
-      const updatedUser = await updateUserProfile(formData);
-      setMessage('¡Perfil actualizado con éxito!');
-      // TODO: Actualizar el estado global del usuario con 'updatedUser' si la API lo devuelve
+      // El objeto que se envía al servicio ya está en camelCase
+      const updatedUser = await updateUserProfile({
+        firstName: detailsForm.firstName,
+        lastName: detailsForm.lastName,
+      });
+      // Actualiza el estado global en AuthContext para reflejar el cambio en toda la app
+      updateUserState(updatedUser); 
+      setDetailsMessage({ type: 'success', text: '¡Perfil actualizado con éxito!' });
     } catch (error) {
-      setMessage(`Error al actualizar el perfil: ${error.message}`);
+      setDetailsMessage({ type: 'error', text: `Error: ${error.message}` });
     } finally {
-      setLoadingDetails(false);
+      setDetailsLoading(false);
     }
   };
 
-  // Envía el nuevo archivo de avatar
-  const handleAvatarSubmit = async (e) => {
+  // Envía el cambio de contraseña
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    if (!avatarFile) return;
-
-    setLoadingAvatar(true);
-    setMessage('');
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'Las nuevas contraseñas no coinciden.' });
+      return;
+    }
+    if (!passwordForm.newPassword) {
+        setPasswordMessage({ type: 'error', text: 'La nueva contraseña no puede estar vacía.' });
+        return;
+    }
+    setPasswordLoading(true);
+    setPasswordMessage({ type: '', text: '' });
     try {
-      const updatedUser = await updateUserAvatar(avatarFile);
-      setMessage('¡Avatar actualizado con éxito!');
-      // TODO: Actualizar el estado global del usuario con 'updatedUser' para reflejar el nuevo avatar
+      await changeUserPassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
+      setPasswordMessage({ type: 'success', text: '¡Contraseña cambiada con éxito!' });
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' }); // Limpia el formulario
     } catch (error) {
-      setMessage(`Error al subir el avatar: ${error.message}`);
+      setPasswordMessage({ type: 'error', text: `Error: ${error.message}` });
     } finally {
-      setLoadingAvatar(false);
+      setPasswordLoading(false);
     }
   };
 
@@ -79,44 +89,53 @@ const AdminProfile = () => {
     <div className="admin-profile-container">
       <h1>Mi Perfil</h1>
       
-      {message && <p className="message">{message}</p>}
-
       <div className="profile-grid">
-        <div className="profile-avatar-section">
-          <h3>Imagen de Perfil</h3>
-          <div className="avatar-preview">
-            <img src={avatarPreview} alt="Vista previa del Avatar" />
-            <label htmlFor="avatar-upload" className="edit-icon">
-              <FiCamera />
-            </label>
-          </div>
-          <form onSubmit={handleAvatarSubmit}>
-            <input type="file" id="avatar-upload" accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} />
-            {avatarFile && (
-              <button type="submit" disabled={loadingAvatar}>
-                {loadingAvatar ? 'Subiendo...' : 'Guardar Imagen'}
-              </button>
-            )}
-          </form>
-        </div>
-
-        <div className="profile-details-section">
+        {/* FORMULARIO DE DETALLES */}
+        <div className="profile-section">
           <h3>Detalles de la Cuenta</h3>
           <form onSubmit={handleDetailsSubmit}>
             <div className="form-group">
               <label>Nombre</label>
-              <input type="text" name="firstname" value={formData.firstname} onChange={handleDetailsChange} required />
+              <input type="text" name="firstName" value={detailsForm.firstName} onChange={handleDetailsChange} required />
             </div>
             <div className="form-group">
               <label>Apellido</label>
-              <input type="text" name="lastname" value={formData.lastname} onChange={handleDetailsChange} required />
+              <input type="text" name="lastName" value={detailsForm.lastName} onChange={handleDetailsChange} required />
             </div>
             <div className="form-group">
               <label>Email</label>
-              <input type="email" name="email" value={formData.email} onChange={handleDetailsChange} disabled />
+              <input type="email" name="email" value={user?.email || ''} disabled />
             </div>
-            <button type="submit" disabled={loadingDetails}>
-              {loadingDetails ? 'Guardando...' : 'Guardar Cambios'}
+            
+            {detailsMessage.text && <p className={`message ${detailsMessage.type}`}>{detailsMessage.text}</p>}
+            
+            <button type="submit" disabled={detailsLoading}>
+              {detailsLoading ? 'Guardando...' : 'Guardar Cambios'}
+            </button>
+          </form>
+        </div>
+
+        {/* FORMULARIO DE CONTRASEÑA */}
+        <div className="profile-section">
+          <h3>Cambiar Contraseña</h3>
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="form-group">
+              <label>Contraseña Actual</label>
+              <input type="password" name="currentPassword" value={passwordForm.currentPassword} onChange={handlePasswordChange} required />
+            </div>
+            <div className="form-group">
+              <label>Nueva Contraseña</label>
+              <input type="password" name="newPassword" value={passwordForm.newPassword} onChange={handlePasswordChange} required />
+            </div>
+            <div className="form-group">
+              <label>Confirmar Nueva Contraseña</label>
+              <input type="password" name="confirmPassword" value={passwordForm.confirmPassword} onChange={handlePasswordChange} required />
+            </div>
+            
+            {passwordMessage.text && <p className={`message ${passwordMessage.type}`}>{passwordMessage.text}</p>}
+            
+            <button type="submit" disabled={passwordLoading}>
+              {passwordLoading ? 'Cambiando...' : 'Cambiar Contraseña'}
             </button>
           </form>
         </div>
