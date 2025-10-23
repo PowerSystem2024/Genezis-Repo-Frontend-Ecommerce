@@ -1,0 +1,200 @@
+@import '../../styles/variables';
+
+// --- Hero Section ---
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 60vh;
+  padding: 2rem;
+  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1528722828614-77b94324e964?q=80&w=1770&auto=format&fit=crop') no-repeat center center/cover;
+  
+  &__title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: $light-text;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: 4rem;
+    }
+  }
+
+  &__subtitle {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: $secondary-text;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: 1.25rem;
+    }
+  }
+
+  &__cta {
+    background-color: $primary-color;
+    color: $light-text;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+// --- General Home Section Styling ---
+.home-section {
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+
+  &__title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+}
+
+// --- Product Grid & Card ---
+.product-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr; // 1 columna en mobile
+
+  @media (min-width: $breakpoint-sm) {
+    grid-template-columns: repeat(2, 1fr); // 2 en tablet
+  }
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(4, 1fr); // 4 en desktop
+  }
+}
+
+.product-card {
+  background-color: $dark-card-bg;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  &__image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  &__info {
+    padding: 1.5rem;
+  }
+
+  &__category {
+    color: $secondary-text;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    color: $light-text;
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+  }
+
+  &__price {
+    color: $primary-color;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+// --- Category Grid & Card ---
+.category-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+
+    @media (min-width: $breakpoint-lg) {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.category-card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 150px;
+    display: flex;
+
+    &__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    &__overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease;
+    }
+    
+    &__name {
+        color: $light-text;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    &:hover {
+        .category-card__image {
+            transform: scale(1.1);
+        }
+        .category-card__overlay {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    }
+}
+
+// --- CTA Section ---
+.cta-section {
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 3rem 2rem;
+  background-color: $dark-card-bg;
+  border-radius: 8px;
+  text-align: center;
+
+  &__title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  &__subtitle {
+      color: $secondary-text;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+  }
+
+  &__button {
+      border: 1px solid $primary-color;
+      color: $primary-color;
+      background: transparent;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+          background-color: $primary-color;
+          color: $light-text;
+      }
+  }
+}

@@ -1,0 +1,87 @@
+@import '../../../styles/variables';
+
+.navbar {
+  background-color: $dark-bg;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid $dark-card-bg;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__logo {
+    color: $light-text;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  &__nav {
+    display: none; // Oculto en mobile-first
+
+    @media (min-width: $breakpoint-md) {
+      display: flex;
+      gap: 2rem;
+    }
+  }
+
+  &__link {
+    color: $secondary-text;
+    font-size: 1rem;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: $light-text;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  &__search {
+    display: none; // Oculto en mobile-first
+    
+    @media (min-width: $breakpoint-lg) {
+      display: flex;
+      align-items: center;
+      background-color: $dark-card-bg;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      
+      input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: $light-text;
+        margin-left: 0.5rem;
+        
+        &::placeholder {
+          color: $secondary-text;
+        }
+      }
+    }
+  }
+
+  &__icon {
+    color: $secondary-text;
+    font-size: 1.25rem;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: $light-text;
+    }
+  }
+
+  &__action-link {
+    display: flex;
+    align-items: center;
+  }
+}
