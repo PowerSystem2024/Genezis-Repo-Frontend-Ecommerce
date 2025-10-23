@@ -1,68 +1,98 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Asegúrate de que Link esté importado
-import { getAllProducts, createProduct, updateProduct, deleteProduct } from '../../services/productService';
+import { Link } from 'react-router-dom';
+import { 
+  getAllProducts, 
+  createProduct, 
+  updateProduct, 
+  deleteProduct, 
+  updateProductImage 
+} from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
+import { FiUploadCloud } from 'react-icons/fi';
 import './AdminProducts.scss';
 
 // --- Subcomponente del Formulario (Modal) ---
 const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
-  const getInitialState = () => {
-    if (!currentProduct) {
-      return { name: '', description: '', price: '', stock: '', coverImageURL: '', categoryID: '' };
-    }
+  const [product, setProduct] = useState(() => {
+    const initialState = { name: '', description: '', price: '', stock: '', categoryID: '' };
+    if (!currentProduct) return initialState;
     return {
       ...currentProduct,
-      coverImageURL: currentProduct.coverimageurl || '',
       categoryID: currentProduct.categoryid || '',
     };
-  };
+  });
   
-  const [product, setProduct] = useState(getInitialState);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(currentProduct?.coverimageurl || '');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(product);
+    onSave(product, imageFile);
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>{currentProduct ? 'Editar Producto' : 'Crear Producto'}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Nombre</label>
-            <input type="text" name="name" value={product.name} onChange={handleChange} required />
-          </div>
-          <div className="form-group">
-            <label>Descripción</label>
-            <textarea name="description" value={product.description} onChange={handleChange} required />
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Precio</label>
-              <input type="number" name="price" value={product.price} onChange={handleChange} required step="0.01" min="0" />
-            </div>
-            <div className="form-group">
-              <label>Stock</label>
-              <input type="number" name="stock" value={product.stock} onChange={handleChange} required min="0" />
+        <form onSubmit={handleSubmit} className="product-form-grid">
+          <div className="form-group-image">
+            <label>Imagen de Portada</label>
+            <div className="image-uploader">
+              <input type="file" id="image-upload" accept="image/*" onChange={handleImageChange} />
+              <label htmlFor="image-upload" className="upload-area">
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Vista previa" className="image-preview" />
+                ) : (
+                  <div className="upload-prompt">
+                    <FiUploadCloud />
+                    <span>Click para subir imagen</span>
+                  </div>
+                )}
+              </label>
             </div>
           </div>
-          <div className="form-group">
-            <label>URL de Imagen</label>
-            <input type="text" name="coverImageURL" value={product.coverImageURL} onChange={handleChange} required />
+
+          <div className="form-fields">
+            <div className="form-group">
+              <label>Nombre</label>
+              <input type="text" name="name" value={product.name} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Descripción</label>
+              <textarea name="description" value={product.description} onChange={handleChange} required />
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Precio</label>
+                <input type="number" name="price" value={product.price} onChange={handleChange} required step="0.01" min="0" />
+              </div>
+              <div className="form-group">
+                <label>Stock</label>
+                <input type="number" name="stock" value={product.stock} onChange={handleChange} required min="0" />
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Categoría</label>
+              <select name="categoryID" value={product.categoryID} onChange={handleChange} required>
+                <option value="">Seleccione una categoría</option>
+                {Array.isArray(categories) && categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+              </select>
+            </div>
           </div>
-          <div className="form-group">
-            <label>Categoría</label>
-            <select name="categoryID" value={product.categoryID} onChange={handleChange} required>
-              <option value="">Seleccione una categoría</option>
-              {Array.isArray(categories) && categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-            </select>
-          </div>
+          
           <div className="form-actions">
             <button type="button" onClick={onCancel}>Cancelar</button>
             <button type="submit">Guardar</button>
@@ -106,18 +136,35 @@ const AdminProducts = () => {
     loadData();
   }, []);
   
-  const handleSave = async (productData) => {
+  const handleSave = async (productData, imageFile) => {
     setError('');
+    let savedProduct = { ...productData };
+
     try {
+      // PASO 1: Guardar datos de texto
       if (productData.id) {
         await updateProduct(productData.id, productData);
-        setProducts(products.map(p => (p.id === productData.id ? productData : p)));
       } else {
         const created = await createProduct(productData);
-        setProducts([...products, created]);
+        savedProduct.id = created.id; // Obtenemos el ID del nuevo producto
       }
+
+      // PASO 2: Si hay una imagen nueva, subirla
+      if (imageFile && savedProduct.id) {
+        const updatedProductWithImage = await updateProductImage(savedProduct.id, imageFile);
+        savedProduct = { ...savedProduct, ...updatedProductWithImage };
+      }
+      
+      // PASO 3: Actualizar el estado de la UI
+      if (productData.id) {
+        setProducts(products.map(p => (p.id === savedProduct.id ? savedProduct : p)));
+      } else {
+        setProducts([...products, savedProduct]);
+      }
+
       setIsFormOpen(false);
       setCurrentProduct(null);
+
     } catch (err) {
       console.error("Error al guardar:", err);
       setError('Error al guardar el producto. Verifique los datos e intente de nuevo.');
@@ -131,6 +178,7 @@ const AdminProducts = () => {
         setProducts(products.filter(p => p.id !== productId));
       } catch (err) {
         setError('Error al eliminar el producto.');
+        console.error(err);
       }
     }
   };
@@ -141,7 +189,7 @@ const AdminProducts = () => {
     <div className="admin-products-container">
       <div className="admin-header">
         <h1>Gestión de Productos</h1>
-        <div> {/* Contenedor para los botones */}
+        <div>
           <Link to="/admin/profile" className="profile-link">Mi Perfil</Link>
           <button onClick={() => { setCurrentProduct(null); setIsFormOpen(true); }}>
             + Crear Producto
@@ -165,6 +213,7 @@ const AdminProducts = () => {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Imagen</th> {/* Añadimos columna de imagen */}
               <th>Nombre</th>
               <th>Precio</th>
               <th>Stock</th>
@@ -175,6 +224,9 @@ const AdminProducts = () => {
             {products.map(product => (
               <tr key={product.id}>
                 <td>{product.id}</td>
+                <td>
+                  <img src={product.coverimageurl} alt={product.name} className="product-table-image" />
+                </td>
                 <td>{product.name}</td>
                 <td>${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
                 <td>{product.stock}</td>

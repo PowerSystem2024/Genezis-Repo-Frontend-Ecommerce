@@ -1,4 +1,4 @@
-import { fetchWithAuth } from './api';
+import { fetchWithAuth, fetchWithAuthFormData } from './api';
 
 const BASE_URL = 'https://backend-genezis.onrender.com/api';
 
@@ -34,13 +34,13 @@ export const getProductById = async (id) => {
 // --- Funciones Protegidas (Admin) ---
 
 export const createProduct = async (productData) => {
+  // Se envían solo los datos de texto. La imagen se sube después.
   const dataToSend = {
     name: productData.name,
     description: productData.description,
     price: parseFloat(productData.price),
     stock: parseInt(productData.stock, 10),
-    coverImageURL: productData.coverImageURL, // Usa camelCase
-    categoryID: parseInt(productData.categoryID, 10), // Usa camelCase
+    categoryID: parseInt(productData.categoryID, 10),
   };
   return await fetchWithAuth('/products', {
     method: 'POST',
@@ -49,19 +49,33 @@ export const createProduct = async (productData) => {
 };
 
 export const updateProduct = async (id, productData) => {
+  // Se envían solo los datos de texto. La imagen se sube después.
   const dataToSend = {
     name: productData.name,
     description: productData.description,
     price: parseFloat(productData.price),
     stock: parseInt(productData.stock, 10),
-    coverImageURL: productData.coverImageURL, // Usa camelCase
-    categoryID: parseInt(productData.categoryID, 10), // Usa camelCase
+    categoryID: parseInt(productData.categoryID, 10),
   };
-
   return await fetchWithAuth(`/products/${id}`, {
     method: 'PUT',
     body: JSON.stringify(dataToSend),
   });
+};
+
+/**
+ * Sube o actualiza la imagen de portada de un producto.
+ * @param {number | string} productId - El ID del producto.
+ * @param {File} imageFile - El archivo de imagen a subir.
+ * @returns {Promise<object>} El objeto de producto actualizado con la nueva URL de imagen.
+ */
+export const updateProductImage = async (productId, imageFile) => {
+  const formData = new FormData();
+  // 'image' debe ser el nombre del campo que tu backend espera (ej. upload.single('image'))
+  formData.append('productImage', imageFile); 
+  
+  // Usamos la función especial para FormData de nuestro api.js y el endpoint PUT
+  return await fetchWithAuthFormData(`/products/${productId}/image`, formData);
 };
 
 export const deleteProduct = async (id) => {

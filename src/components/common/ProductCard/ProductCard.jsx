@@ -8,6 +8,9 @@ import './ProductCard.scss';
 const ProductCard = ({ product, categoryName, viewMode = 'grid' }) => {
   const { addToCart } = useCart();
   const [isAdding, setIsAdding] = useState(false);
+  console.log('Datos del producto recibidos en ProductCard:', product);
+
+  
 
   if (!product) {
     return null;
