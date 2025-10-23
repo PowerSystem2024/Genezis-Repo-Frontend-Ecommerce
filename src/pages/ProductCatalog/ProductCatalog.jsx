@@ -5,13 +5,13 @@ import { getAllCategories } from '../../services/categoryService';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import CategorySidebar from '../../components/common/CategorySidebar/CategorySidebar';
 import FilterSidebar from '../../components/common/FilterSidebar/FilterSidebar';
-import { FiGrid, FiList, FiMenu, FiFilter } from 'react-icons/fi';
+import { FiGrid, FiList, FiMenu, FiFilter, FiSearch, FiX } from 'react-icons/fi';
 import './ProductCatalog.scss';
 
 const ProductCatalog = () => {
   const { products, loading: productsLoading, error: productsError } = useProducts();
   const [categories, setCategories] = useState([]);
-  const [loadingCategories, setLoadingCategories] = useState(true); // Se usará ahora
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('default');
@@ -20,38 +20,25 @@ const ProductCatalog = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoadingCategories(true);
-        const categoriesData = await getAllCategories();
-        setCategories(categoriesData);
-      } catch (err) {
-        console.error("Error al cargar categorías:", err);
-      } finally {
-        setLoadingCategories(false);
-      }
-    };
+    // ... (sin cambios aquí)
+    const fetchCategories = async () => { try { setLoadingCategories(true); const data = await getAllCategories(); setCategories(data); } catch (err) { console.error("Error al cargar categorías:", err); } finally { setLoadingCategories(false); } };
     fetchCategories();
   }, []);
   
   useEffect(() => {
+    // Ya no es necesario, el estado se maneja localmente, pero lo dejamos por si se comparte un enlace con ?search=
     const params = new URLSearchParams(location.search);
     const searchFromURL = params.get('search');
-    setSearchTerm(searchFromURL || '');
+    if (searchFromURL) {
+      setSearchTerm(searchFromURL);
+    }
   }, [location.search]);
 
   const filteredAndSortedProducts = useMemo(() => {
-    // ... (esta lógica no cambia)
+    // ... (sin cambios en la lógica de filtrado)
     let result = [...products];
-    if (activeCategory !== 'all') {
-      result = result.filter(p => p.categoryid === activeCategory);
-    }
-    if (searchTerm) {
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+    if (activeCategory !== 'all') { result = result.filter(p => p.categoryid === activeCategory); }
+    if (searchTerm) { result = result.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.description.toLowerCase().includes(searchTerm.toLowerCase())); }
     switch (sortOrder) {
       case 'price-asc': result.sort((a, b) => parseFloat(a.price) - parseFloat(b.price)); break;
       case 'price-desc': result.sort((a, b) => parseFloat(b.price) - parseFloat(a.price)); break;
@@ -60,16 +47,11 @@ const ProductCatalog = () => {
     return result;
   }, [products, activeCategory, searchTerm, sortOrder]);
 
-  const handleCategorySelect = (categoryId) => {
-    setActiveCategory(categoryId);
-    setIsFilterSidebarOpen(false);
-  };
+  const handleCategorySelect = (categoryId) => { setActiveCategory(categoryId); setIsFilterSidebarOpen(false); };
   
   const renderProductList = () => {
-    // CORRECCIÓN: Usamos todos los estados de carga y error
     if (productsLoading || loadingCategories) return <p>Cargando...</p>;
     if (productsError) return <p className="error-message">{productsError}</p>;
-
     return (
       <div className={viewMode === 'grid' ? 'product-grid' : 'product-list'}>
         {filteredAndSortedProducts.length > 0 ? (
@@ -87,29 +69,34 @@ const ProductCatalog = () => {
 
   return (
     <div className="product-catalog-page">
-      {/* ... (el resto del JSX no cambia) ... */}
       <FilterSidebar isOpen={isFilterSidebarOpen} onClose={() => setIsFilterSidebarOpen(false)}>
-        <CategorySidebar
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategorySelect={handleCategorySelect}
-        />
+        <CategorySidebar categories={categories} activeCategory={activeCategory} onCategorySelect={handleCategorySelect} />
       </FilterSidebar>
+      
       <div className="catalog-container">
         <aside className="desktop-filters">
-          <CategorySidebar
-            categories={categories}
-            activeCategory={activeCategory}
-            onCategorySelect={handleCategorySelect}
-          />
+          <CategorySidebar categories={categories} activeCategory={activeCategory} onCategorySelect={handleCategorySelect} />
         </aside>
+
         <main className="product-list-container">
           <div className="mobile-filter-buttons">
             <button onClick={() => setIsFilterSidebarOpen(true)}><FiMenu /> Categorías</button>
             <button><FiFilter /> Filtros</button>
           </div>
+          
           <div className="product-list-header">
             <h1>{categories.find(c => c.id === activeCategory)?.name || 'Todos los productos'}</h1>
+            {/* --- BARRA DE BÚSQUEDA AÑADIDA AQUÍ --- */}
+            <div className="search-control">
+              <FiSearch />
+              <input 
+                type="text"
+                placeholder="Buscar en esta categoría..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && <button onClick={() => setSearchTerm('')}><FiX /></button>}
+            </div>
             <div className="controls">
               <select className="sort-select" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
                 <option value="default">Ordenar por</option>
@@ -122,6 +109,7 @@ const ProductCatalog = () => {
               </div>
             </div>
           </div>
+          
           {renderProductList()}
         </main>
       </div>
