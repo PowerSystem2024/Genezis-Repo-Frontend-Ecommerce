@@ -1,0 +1,134 @@
+@import '../../styles/variables';
+
+.cart-page {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+
+  &--empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    h2 { font-size: 2rem; margin-bottom: 1rem; }
+    p { color: $secondary-text; margin-bottom: 2rem; }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+}
+
+.cart-items {
+  background-color: $dark-card-bg;
+  padding: 2rem;
+  border-radius: 8px;
+  h2 { font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid lighten($dark-bg, 10%); padding-bottom: 1rem; }
+}
+
+.cart-page-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.5rem 0;
+  &:not(:last-child) {
+    border-bottom: 1px solid lighten($dark-bg, 10%);
+  }
+
+  .item-image {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .item-name {
+    color: $light-text;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+    &:hover { color: $primary-color; }
+  }
+  .item-remove {
+    background: none;
+    border: none;
+    color: $primary-color;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    &:hover { text-decoration: underline; }
+  }
+  .item-quantity input {
+    width: 60px;
+    background-color: $dark-bg;
+    color: $light-text;
+    border: 1px solid lighten($dark-bg, 15%);
+    border-radius: 4px;
+    padding: 0.5rem;
+    text-align: center;
+  }
+  .item-price {
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: right;
+  }
+}
+
+.cart-summary {
+  background-color: $dark-card-bg;
+  padding: 2rem;
+  border-radius: 8px;
+  height: fit-content; // Para que no se estire
+  position: sticky; // Para que siga al usuario al hacer scroll
+  top: 2rem;
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid lighten($dark-bg, 10%);
+    padding-bottom: 1rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    color: $secondary-text;
+
+    span:last-child {
+      color: $light-text;
+      font-weight: 600;
+    }
+  }
+  
+  .free-shipping {
+    color: #4ade80 !important; // Verde
+  }
+
+  .total-row {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid lighten($dark-bg, 10%);
+    font-size: 1.2rem;
+    color: $light-text;
+  }
+}
+
+.cart__cta-btn {
+    margin-top: 1rem;
+    display: block;
+    width: 100%;
+    background-color: $primary-color;
+    color: $light-text;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    &:hover { background-color: darken($primary-color, 10%); }
+}

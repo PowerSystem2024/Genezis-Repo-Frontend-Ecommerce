@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProductById } from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
+import { useCart } from '../../context/CartContext'; // Importación correcta
 import { FiShoppingCart } from 'react-icons/fi';
 import './ProductDetail.scss';
 
 const ProductDetail = () => {
-  const { productId } = useParams(); // Hook para obtener los parámetros de la URL
+  // --- LA LLAMADA AL HOOK DEBE ESTAR AQUÍ, DENTRO DEL COMPONENTE ---
+  const { addToCart } = useCart();
+  
+  const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +22,6 @@ const ProductDetail = () => {
         setLoading(true);
         setError(null);
 
-        // Obtenemos el producto y todas las categorías simultáneamente
         const [productData, categoriesData] = await Promise.all([
           getProductById(productId),
           getAllCategories()
@@ -26,7 +29,6 @@ const ProductDetail = () => {
         
         setProduct(productData);
 
-        // Buscamos el nombre de la categoría correspondiente
         const foundCategory = categoriesData.find(cat => cat.id === productData.categoryid);
         setCategory(foundCategory);
 
@@ -39,7 +41,7 @@ const ProductDetail = () => {
     };
 
     fetchProductData();
-  }, [productId]); // Se ejecuta cada vez que el productId de la URL cambia
+  }, [productId]);
 
   if (loading) {
     return <p className="status-message">Cargando producto...</p>;
@@ -80,6 +82,7 @@ const ProductDetail = () => {
             <button 
               className="product-detail__add-to-cart-btn" 
               disabled={product.stock === 0}
+              onClick={() => addToCart(product)}
             >
               <FiShoppingCart />
               Añadir al carrito

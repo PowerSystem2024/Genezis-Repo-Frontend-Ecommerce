@@ -1,35 +1,93 @@
-@import '../../../styles/variables';
+@import "../../../styles/variables";
 
 .product-card {
   background-color: $dark-card-bg;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: 1px solid transparent;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  &__image-link {
-    display: block;
+    border-color: $primary-color;
   }
 
-  &__image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  &__info {
-    padding: 1rem;
-    display: flex;
+  // --- MODO GRID (POR DEFECTO) ---
+  &--grid {
     flex-direction: column;
-    flex-grow: 1; // Permite que esta sección crezca para alinear los footers
+
+    .product-card__image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-card__info {
+      padding: 1rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card__actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1rem 1rem;
+    }
+
+    .product-card__cart-btn {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
   }
 
+  // --- MODO LISTA ---
+  &--list {
+    flex-direction: row;
+    align-items: center;
+    padding: 1.5rem;
+
+    .product-card__image-link {
+      flex-shrink: 0;
+    }
+
+    .product-card__image {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      margin-right: 1.5rem;
+    }
+
+    .product-card__info {
+      flex-grow: 1;
+    }
+
+    .product-card__actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-left: 1.5rem;
+    }
+
+    .product-card__price {
+      margin-bottom: 1rem;
+    }
+
+    .product-card__cart-btn {
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      width: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  // --- Elementos Comunes ---
   &__category {
     color: $secondary-text;
     font-size: 0.8rem;
@@ -42,21 +100,27 @@
     font-size: 1rem;
     margin-bottom: 1rem;
     line-height: 1.4;
-    flex-grow: 1; // Empuja el footer hacia abajo
+    flex-grow: 1;
 
     a {
-      color: inherit; // Hereda el color del h3
+      color: inherit;
       &:hover {
         color: $primary-color;
       }
     }
   }
 
-  &__footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto; // Asegura que se alinee al final
+  &__description {
+    color: $secondary-text;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    // --- CORRECCIÓN AQUÍ ---
+    -webkit-line-clamp: 2;
+    line-clamp: 2; // Añadir la propiedad estándar
   }
 
   &__price {
@@ -69,9 +133,6 @@
     background-color: $primary-color;
     color: $light-text;
     border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,8 +140,80 @@
     font-size: 1.2rem;
     transition: background-color 0.2s ease;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: darken($primary-color, 10%);
+    }
+
+    &:disabled {
+      background-color: lighten($dark-card-bg, 10%);
+      cursor: progress;
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .loader-icon {
+    animation: spin 1s linear infinite;
+  }
+}
+
+// Estilo para la lista (cuando no es grid)
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// --- FIX PARA VISTA DE LISTA EN MÓVIL ---
+@media (max-width: $breakpoint-sm) {
+  .product-card--list {
+    flex-direction: column;
+    align-items: stretch; // Estirar elementos
+    padding: 0;
+
+    .product-card__image-link {
+      align-self: center; // Centrar la imagen
+    }
+
+    .product-card__image {
+      width: 100%; // Imagen ancha como en grid
+      height: 200px;
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+
+    .product-card__info {
+      padding: 0 1rem;
+    }
+
+    .product-card__actions {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-left: 0;
+      padding: 1rem;
+    }
+
+    .product-card__price {
+      margin-bottom: 0;
+    }
+
+    .product-card__cart-btn {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+
+      span {
+        // Ocultar el texto "Sumar al carrito"
+        display: none;
+      }
     }
   }
 }
