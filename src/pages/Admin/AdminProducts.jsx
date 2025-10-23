@@ -14,6 +14,7 @@ import './AdminProducts.scss';
 // --- Subcomponente del Formulario (Modal) ---
 const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
   const [product, setProduct] = useState(() => {
+    // ¡CORRECCIÓN IMPORTANTE! El backend espera 'categoryID'
     const initialState = { name: '', description: '', price: '', stock: '', categoryID: '' };
     if (!currentProduct) return initialState;
     return {
@@ -72,7 +73,7 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
             </div>
             <div className="form-group">
               <label>Descripción</label>
-              <textarea name="description" value={product.description} onChange={handleChange} required />
+              <textarea name="description" value={product.description} onChange={handleChange} />
             </div>
             <div className="form-row">
               <div className="form-group">
@@ -114,52 +115,57 @@ const AdminProducts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
 
+  const fetchProducts = async () => {
+    try {
+      const productsData = await getAllProducts();
+      const productsArray = Array.isArray(productsData) ? productsData : productsData?.products || [];
+      setProducts(productsArray);
+    } catch (err) {
+      setError('No se pudieron cargar los productos.');
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const [productsData, categoriesData] = await Promise.all([getAllProducts(), getAllCategories()]);
-        
-        const productsArray = Array.isArray(productsData) ? productsData : productsData?.products || [];
-        
-        setProducts(productsArray);
-        setCategories(categoriesData);
-
-      } catch (err) {
-        setError('No se pudieron cargar los datos. Intente recargar la página.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      setError('');
+      await Promise.all([
+        fetchProducts(),
+        getAllCategories().then(setCategories)
+      ]);
+      setLoading(false);
     };
     loadData();
   }, []);
   
   const handleSave = async (productData, imageFile) => {
     setError('');
-    let savedProduct = { ...productData };
-
+    
     try {
-      // PASO 1: Guardar datos de texto
-      if (productData.id) {
-        await updateProduct(productData.id, productData);
-      } else {
-        const created = await createProduct(productData);
-        savedProduct.id = created.id; // Obtenemos el ID del nuevo producto
-      }
+      // --- LÓGICA DE GUARDADO CORREGIDA ---
+      if (currentProduct && currentProduct.id) {
+        // --- MODO EDICIÓN ---
+        // 1. Actualizar datos de texto
+        await updateProduct(currentProduct.id, productData);
+        let finalProduct = { ...currentProduct, ...productData };
 
-      // PASO 2: Si hay una imagen nueva, subirla
-      if (imageFile && savedProduct.id) {
-        const updatedProductWithImage = await updateProductImage(savedProduct.id, imageFile);
-        savedProduct = { ...savedProduct, ...updatedProductWithImage };
-      }
-      
-      // PASO 3: Actualizar el estado de la UI
-      if (productData.id) {
-        setProducts(products.map(p => (p.id === savedProduct.id ? savedProduct : p)));
+        // 2. Si se subió una nueva imagen, actualizarla
+        if (imageFile) {
+          const updatedProductWithImage = await updateProductImage(currentProduct.id, imageFile);
+          finalProduct.coverimageurl = updatedProductWithImage.coverimageurl;
+        }
+
+        // 3. Actualizar UI
+        setProducts(products.map(p => (p.id === finalProduct.id ? finalProduct : p)));
+        
       } else {
-        setProducts([...products, savedProduct]);
+        // --- MODO CREACIÓN ---
+        // 1. Enviar todo de una vez
+        const newProduct = await createProduct(productData, imageFile);
+        
+        // 2. Actualizar UI
+        setProducts([...products, newProduct]);
       }
 
       setIsFormOpen(false);
@@ -167,7 +173,7 @@ const AdminProducts = () => {
 
     } catch (err) {
       console.error("Error al guardar:", err);
-      setError('Error al guardar el producto. Verifique los datos e intente de nuevo.');
+      setError(err.message || 'Error al guardar el producto.');
     }
   };
 
@@ -213,7 +219,7 @@ const AdminProducts = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Imagen</th> {/* Añadimos columna de imagen */}
+              <th>Imagen</th>
               <th>Nombre</th>
               <th>Precio</th>
               <th>Stock</th>

@@ -1,4 +1,4 @@
-import { fetchWithAuth, fetchWithAuthFormData } from './api';
+import { fetchWithAuth } from './api';
 
 const BASE_URL = 'https://backend-genezis.onrender.com/api';
 
@@ -33,23 +33,50 @@ export const getProductById = async (id) => {
 
 // --- Funciones Protegidas (Admin) ---
 
-export const createProduct = async (productData) => {
-  // Se envían solo los datos de texto. La imagen se sube después.
-  const dataToSend = {
-    name: productData.name,
-    description: productData.description,
-    price: parseFloat(productData.price),
-    stock: parseInt(productData.stock, 10),
-    categoryID: parseInt(productData.categoryID, 10),
-  };
-  return await fetchWithAuth('/products', {
+/**
+ * Crea un nuevo producto enviando datos de texto y la imagen de portada en una sola petición.
+ * @param {object} productData - Datos del producto (name, description, etc.).
+ * @param {File} imageFile - El archivo de la imagen de portada.
+ * @returns {Promise<object>} El producto recién creado.
+ */
+export const createProduct = async (productData, imageFile) => {
+  const formData = new FormData();
+
+  // 1. Añadimos todos los campos de texto al FormData
+  formData.append('name', productData.name);
+  formData.append('description', productData.description);
+  formData.append('price', productData.price);
+  formData.append('stock', productData.stock);
+  // ¡CORRECCIÓN IMPORTANTE! El backend espera 'categoryID', no 'categoryid'
+  formData.append('categoryID', productData.categoryID); 
+
+  // 2. Añadimos el archivo de imagen
+  // El nombre 'productImage' debe coincidir EXACTAMENTE con el de la documentación de Swagger.
+  if (imageFile) {
+    formData.append('productImage', imageFile);
+  }
+
+  // 3. Realizamos la petición. NO usamos fetchWithAuth porque necesitamos que el navegador maneje el Content-Type
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${BASE_URL}/products`, {
     method: 'POST',
-    body: JSON.stringify(dataToSend),
+    headers: {
+      'Authorization': `Bearer ${token}`
+      // NO se define 'Content-Type', el navegador lo hará como 'multipart/form-data'
+    },
+    body: formData,
   });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || 'Error al crear el producto.');
+  }
+  return data.product; // Asumiendo que la API devuelve { message, product }
 };
 
+
 export const updateProduct = async (id, productData) => {
-  // Se envían solo los datos de texto. La imagen se sube después.
+  // La actualización de datos de texto puede seguir siendo JSON
   const dataToSend = {
     name: productData.name,
     description: productData.description,
@@ -63,20 +90,32 @@ export const updateProduct = async (id, productData) => {
   });
 };
 
+
 /**
- * Sube o actualiza la imagen de portada de un producto.
+ * Sube o actualiza la imagen de portada de un producto existente.
  * @param {number | string} productId - El ID del producto.
  * @param {File} imageFile - El archivo de imagen a subir.
- * @returns {Promise<object>} El objeto de producto actualizado con la nueva URL de imagen.
+ * @returns {Promise<object>} El objeto de producto actualizado.
  */
 export const updateProductImage = async (productId, imageFile) => {
   const formData = new FormData();
-  // 'image' debe ser el nombre del campo que tu backend espera (ej. upload.single('image'))
-  formData.append('productImage', imageFile); 
+  // El backend espera 'image' para la actualización, según la documentación anterior
+  formData.append('image', imageFile); 
   
-  // Usamos la función especial para FormData de nuestro api.js y el endpoint PUT
-  return await fetchWithAuthFormData(`/products/${productId}/image`, formData);
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${BASE_URL}/products/${productId}/image`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData,
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || 'Error al actualizar la imagen.');
+  }
+  return data.product;
 };
+
 
 export const deleteProduct = async (id) => {
   return await fetchWithAuth(`/products/${id}`, {
