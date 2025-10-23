@@ -1,3 +1,5 @@
+// src/services/api.js
+
 const BASE_URL = 'https://backend-genezis.onrender.com/api';
 
 /**
@@ -7,50 +9,32 @@ const BASE_URL = 'https://backend-genezis.onrender.com/api';
  * @returns {Promise<any>} La respuesta de la API en formato JSON.
  */
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  // 1. Intentamos leer el token del localStorage.
   const token = localStorage.getItem('token');
   
-  // --- LOG DE DEPURACIÓN #1 ---
-  // Esto nos dirá si estamos encontrando el token.
-  console.log('fetchWithAuth: Token leído de localStorage:', token);
-
+  // Preparamos los headers
   const headers = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...options.headers, // Permite sobrescribir o añadir otros headers si es necesario
   };
 
-  // 2. Si encontramos un token, lo añadimos al encabezado de Authorization.
+  // Si tenemos un token, lo añadimos al header de Authorization
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
-  } else {
-    // Si no hay token, es importante saberlo.
-    console.warn('fetchWithAuth: No se encontró token en localStorage. La petición irá sin autenticación.');
   }
   
+  // Construimos la configuración final para fetch
   const config = {
     ...options,
     headers,
   };
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, config);
   
-  // --- LOG DE DEPURACIÓN #2 ---
-  // Esto nos mostrará los encabezados exactos que se van a enviar.
-  console.log('fetchWithAuth: Enviando petición con la siguiente configuración:', config);
-
-  try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, config);
-    
-    // Si la respuesta no es OK, intentamos leer el JSON de error.
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('fetchWithAuth: Error recibido de la API:', errorData);
-      throw new Error(errorData.message || `Error en la petición: ${response.statusText}`);
-    }
-
-    // Si la respuesta es OK, devolvemos el JSON.
-    return await response.json();
-
-  } catch (error) {
-    console.error('fetchWithAuth: Fallo en la petición fetch o al procesar la respuesta.', error);
-    throw error; // Relanzamos el error para que el componente que llama lo pueda manejar.
+  const data = await response.json();
+  if (!response.ok) {
+    // Si la API devuelve un mensaje de error, lo usamos. Si no, un mensaje genérico.
+    throw new Error(data.message || `Error en la petición a ${endpoint}`);
   }
+
+  return data;
 };
