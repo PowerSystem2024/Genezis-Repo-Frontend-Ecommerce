@@ -1,0 +1,69 @@
+@import '../../styles/variables';
+
+.product-catalog {
+  &__container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+  }
+
+  &__title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  &__filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+}
+
+.filter-btn {
+  background-color: $dark-card-bg;
+  color: $secondary-text;
+  border: 1px solid transparent;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: lighten($dark-card-bg, 5%);
+    color: $light-text;
+  }
+
+  &.active {
+    background-color: $primary-color;
+    color: $light-text;
+    border-color: $primary-color;
+  }
+}
+
+.error-message {
+  color: #f87171; // Un color rojo para errores
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+// Reutilizamos la clase .product-grid
+.product-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 500px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

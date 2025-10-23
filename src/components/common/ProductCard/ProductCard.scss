@@ -1,0 +1,86 @@
+@import '../../../styles/variables';
+
+.product-card {
+  background-color: $dark-card-bg;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  &__image-link {
+    display: block;
+  }
+
+  &__image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  &__info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; // Permite que esta sección crezca para alinear los footers
+  }
+
+  &__category {
+    color: $secondary-text;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  &__name {
+    color: $light-text;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    flex-grow: 1; // Empuja el footer hacia abajo
+
+    a {
+      color: inherit; // Hereda el color del h3
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; // Asegura que se alinee al final
+  }
+
+  &__price {
+    color: $primary-color;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  &__cart-btn {
+    background-color: $primary-color;
+    color: $light-text;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}

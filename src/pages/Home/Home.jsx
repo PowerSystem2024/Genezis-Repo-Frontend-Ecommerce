@@ -1,14 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ProductCard from '../../components/common/ProductCard/ProductCard';
 import './Home.scss';
 
-// Datos de ejemplo. Más adelante vendrán de la API.
+// Datos de ejemplo adaptados a la estructura REAL (todo en minúsculas)
 const featuredProducts = [
-  { id: 1, category: 'Notebooks', name: 'Notebook ASUS ROG Strix G16', price: '$5077.97', image: 'https://picsum.photos/id/1/400/300' },
-  { id: 2, category: 'Keyboards', name: 'Teclado HyperX Alloy Origins Core', price: '$363.95', image: 'https://picsum.photos/id/10/400/300' },
-  { id: 3, category: 'Microphones', name: 'Micrófono HyperX Quadcast S RGB', price: '$492.20', image: 'https://picsum.photos/id/24/400/300' },
-  { id: 4, category: 'Mice', name: 'Mouse Glorious Model O 2 Wireless', price: '$132.65', image: 'https://picsum.photos/id/40/400/300' }
+  { id: 1, name: 'Notebook ASUS ROG Strix G16', price: '5077.97', coverimageurl: 'https://picsum.photos/id/1/400/300', categoryid: 1 },
+  { id: 2, name: 'Teclado HyperX Alloy Origins Core', price: '363.95', coverimageurl: 'https://picsum.photos/id/10/400/300', categoryid: 10 },
+  { id: 3, name: 'Micrófono HyperX Quadcast S RGB', price: '492.20', coverimageurl: 'https://picsum.photos/id/24/400/300', categoryid: 10 },
+  { id: 4, name: 'Mouse Glorious Model O 2 Wireless', price: '132.65', coverimageurl: 'https://picsum.photos/id/40/400/300', categoryid: 10 }
 ];
+
+// Nombres de categorías para los productos destacados
+const featuredCategories = {
+    1: 'Notebooks',
+    10: 'Periféricos'
+}
 
 const categories = [
     { name: 'Procesadores', image: 'https://picsum.photos/id/119/400/300' },
@@ -35,14 +42,12 @@ const Home = () => {
         <h2 className="home-section__title">Productos Destacados</h2>
         <div className="product-grid">
           {featuredProducts.map(product => (
-            <div key={product.id} className="product-card">
-              <img src={product.image} alt={product.name} className="product-card__image" />
-              <div className="product-card__info">
-                <span className="product-card__category">{product.category}</span>
-                <h3 className="product-card__name">{product.name}</h3>
-                <p className="product-card__price">{product.price}</p>
-              </div>
-            </div>
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              // CORRECCIÓN AQUÍ: Usamos 'categoryid' en minúsculas
+              categoryName={featuredCategories[product.categoryid] || 'Destacado'}
+            />
           ))}
         </div>
       </section>

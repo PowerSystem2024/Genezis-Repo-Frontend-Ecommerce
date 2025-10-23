@@ -73,44 +73,6 @@
   }
 }
 
-.product-card {
-  background-color: $dark-card-bg;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s ease-in-out;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-
-  &__image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  &__info {
-    padding: 1.5rem;
-  }
-
-  &__category {
-    color: $secondary-text;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-  }
-
-  &__name {
-    color: $light-text;
-    font-size: 1.1rem;
-    margin: 0.5rem 0;
-  }
-
-  &__price {
-    color: $primary-color;
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-}
 
 // --- Category Grid & Card ---
 .category-grid {
