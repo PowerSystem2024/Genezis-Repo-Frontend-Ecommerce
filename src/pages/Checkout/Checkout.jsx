@@ -17,12 +17,15 @@ const Checkout = () => {
     setError('');
     try {
       const preference = await createPaymentPreference(items);
-      if (preference.init_point) {
+      if (preference && preference.init_point) {
+        // Redirigir al usuario a la URL de pago de Mercado Pago
         window.location.href = preference.init_point;
       } else {
         setError('No se pudo obtener la URL de pago. Por favor, intente de nuevo.');
       }
     } catch (err) {
+      // Este console.error es el que ya estás viendo en tu consola.
+      console.error("Error al procesar el pago:", err.message);
       setError(err.message || 'Ocurrió un error al procesar el pago.');
     } finally {
       setLoading(false);
