@@ -1,17 +1,13 @@
-// src/services/productService.js
+import { fetchWithAuth } from './api';
 
 const BASE_URL = 'https://backend-genezis.onrender.com/api';
 
-/**
- * Obtiene todos los productos de la API.
- * @returns {Promise<Array>} Una promesa que resuelve a un array de productos.
- */
+// --- Funciones Públicas ---
+
 export const getAllProducts = async () => {
   try {
     const response = await fetch(`${BASE_URL}/products`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -20,19 +16,11 @@ export const getAllProducts = async () => {
   }
 };
 
-/**
- * Obtiene un solo producto por su ID.
- * @param {string | number} id El ID del producto a obtener.
- * @returns {Promise<Object>} Una promesa que resuelve al objeto del producto.
- */
 export const getProductById = async (id) => {
   try {
     const response = await fetch(`${BASE_URL}/products/${id}`);
     if (!response.ok) {
-      // Si el producto no se encuentra, la API debería devolver un 404.
-      if (response.status === 404) {
-        throw new Error('Producto no encontrado');
-      }
+      if (response.status === 404) throw new Error('Producto no encontrado');
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
@@ -41,4 +29,43 @@ export const getProductById = async (id) => {
     console.error(`Error fetching product with id ${id}:`, error);
     throw error;
   }
+};
+
+// --- Funciones Protegidas (Admin) ---
+
+export const createProduct = async (productData) => {
+  const dataToSend = {
+    name: productData.name,
+    description: productData.description,
+    price: parseFloat(productData.price),
+    stock: parseInt(productData.stock, 10),
+    coverImageURL: productData.coverImageURL, // Usa camelCase
+    categoryID: parseInt(productData.categoryID, 10), // Usa camelCase
+  };
+  return await fetchWithAuth('/products', {
+    method: 'POST',
+    body: JSON.stringify(dataToSend),
+  });
+};
+
+export const updateProduct = async (id, productData) => {
+  const dataToSend = {
+    name: productData.name,
+    description: productData.description,
+    price: parseFloat(productData.price),
+    stock: parseInt(productData.stock, 10),
+    coverImageURL: productData.coverImageURL, // Usa camelCase
+    categoryID: parseInt(productData.categoryID, 10), // Usa camelCase
+  };
+
+  return await fetchWithAuth(`/products/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(dataToSend),
+  });
+};
+
+export const deleteProduct = async (id) => {
+  return await fetchWithAuth(`/products/${id}`, {
+    method: 'DELETE',
+  });
 };

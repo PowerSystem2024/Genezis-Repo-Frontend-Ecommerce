@@ -28,6 +28,10 @@ const Navbar = () => {
             <Link to="/products" className="navbar__link">Productos</Link>
             <Link to="/build-pc" className="navbar__link">Armá tu PC</Link>
             <Link to="/help" className="navbar__link">Ayuda</Link>
+
+            {isAuthenticated && user?.role === 'admin' && (
+              <Link to="/admin/products" className="navbar__link">Admin</Link>
+            )}
           </nav>
           
           <div className="navbar__actions">

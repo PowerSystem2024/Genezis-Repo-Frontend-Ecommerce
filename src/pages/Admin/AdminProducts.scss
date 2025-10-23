@@ -1,0 +1,103 @@
+@use '../../styles/variables' as *;
+@use 'sass:color';
+
+.admin-products-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  h1 { font-size: 2rem; }
+  button {
+    background-color: $primary-color;
+    color: $light-text;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover { background-color: color.adjust($primary-color, $lightness: -10%); }
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto; // Para responsividad en tablas
+  background-color: $dark-card-bg;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid color.adjust($dark-bg, $lightness: 10%);
+  }
+  th { font-size: 0.9rem; color: $secondary-text; text-transform: uppercase; }
+  tbody tr:hover { background-color: color.adjust($dark-card-bg, $lightness: 3%); }
+}
+
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  button {
+    background: none;
+    border: 1px solid $secondary-text;
+    color: $secondary-text;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover { border-color: $primary-color; color: $primary-color; }
+  }
+}
+
+// Estilos del Modal y Formulario
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background-color: $dark-card-bg;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  h2 { margin-bottom: 1.5rem; }
+}
+
+form .form-group { margin-bottom: 1rem; }
+form .form-row { display: flex; gap: 1rem; }
+form label { display: block; margin-bottom: 0.5rem; }
+form input, form textarea, form select {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: $dark-bg;
+  border: 1px solid color.adjust($dark-bg, $lightness: 15%);
+  border-radius: 4px;
+  color: $light-text;
+}
+form .form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    &[type="submit"] { background-color: $primary-color; color: $light-text; border: none; }
+    &[type="button"] { background: none; border: 1px solid $secondary-text; color: $secondary-text; }
+  }
+}

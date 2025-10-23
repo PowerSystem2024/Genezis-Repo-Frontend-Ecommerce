@@ -1,0 +1,77 @@
+@use '../../styles/variables' as *;
+@use 'sass:color';
+
+.checkout-container {
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background-color: $dark-card-bg;
+  border-radius: 8px;
+
+  &.empty {
+    text-align: center;
+    h2 { margin-bottom: 1rem; }
+    p { color: $secondary-text; }
+  }
+}
+
+.checkout-summary {
+  h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid color.adjust($dark-bg, $lightness: 10%);
+
+  .item-name {
+    color: $secondary-text;
+  }
+  .item-price {
+    font-weight: 600;
+  }
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  font-size: 1.5rem;
+  color: $light-text;
+}
+
+.pay-button {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #009ee3; // Color de Mercado Pago
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust(#009ee3, $lightness: -10%);
+  }
+  &:disabled {
+    background-color: color.adjust($dark-card-bg, $lightness: 10%);
+    cursor: not-allowed;
+  }
+}
+
+.error-message {
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  background-color: rgba(248, 113, 113, 0.2);
+  color: #f87171;
+}
