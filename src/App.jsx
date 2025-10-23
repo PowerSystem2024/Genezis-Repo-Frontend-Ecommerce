@@ -1,14 +1,17 @@
 import AppRouter from './router/AppRouter';
 import { CartProvider } from './context/CartContext';
-import { ProductProvider } from './context/ProductContext'; // <-- IMPORTAR
+import { ProductProvider } from './context/ProductContext';
+import { AuthProvider } from './context/AuthContext'; // <-- IMPORTAR
 
 function App() {
   return (
-    <CartProvider>
-      <ProductProvider> {/* <-- ENVOLVER */}
-        <AppRouter />
-      </ProductProvider>
-    </CartProvider>
+    <AuthProvider> {/* <-- ENVOLVER TODO */}
+      <CartProvider>
+        <ProductProvider>
+          <AppRouter />
+        </ProductProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

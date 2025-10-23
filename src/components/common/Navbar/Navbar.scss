@@ -38,7 +38,7 @@
 
   &__nav-desktop {
     display: none;
-    flex-grow: 1; // Ocupa el espacio del medio
+    flex-grow: 1;
     justify-content: center;
     @media (min-width: $breakpoint-lg) { display: flex; gap: 2rem; }
   }
@@ -52,7 +52,7 @@
   &__actions {
     display: flex;
     align-items: center;
-    gap: 1.5rem; // Espacio entre iconos
+    gap: 1.5rem;
   }
 
   &__icon {
@@ -80,4 +80,35 @@
     font-size: 0.75rem; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
   }
-}
+
+  // --- CORRECCIÓN: ESTILOS MOVIDOS AQUÍ DENTRO ---
+  &__user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__username {
+    display: none;
+    color: $secondary-text;
+    
+    @media (min-width: $breakpoint-md) {
+      display: block;
+    }
+  }
+
+  &__logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $secondary-text;
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+
+    &:hover {
+      color: #f87171;
+    }
+  }
+  
+} 

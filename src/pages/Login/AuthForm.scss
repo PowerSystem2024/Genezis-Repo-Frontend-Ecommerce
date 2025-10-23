@@ -1,0 +1,89 @@
+@import '../../styles/variables';
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 2rem;
+}
+
+.auth-form {
+  background-color: $dark-card-bg;
+  padding: 2.5rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+  h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: $secondary-text;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: $dark-bg;
+    border: 1px solid lighten($dark-bg, 15%);
+    border-radius: 4px;
+    color: $light-text;
+    font-size: 1rem;
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+}
+
+.auth-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: darken($primary-color, 10%);
+  }
+  &:disabled {
+    background-color: lighten($dark-card-bg, 10%);
+    cursor: not-allowed;
+  }
+}
+
+.error-message, .success-message {
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.error-message { background-color: rgba(248, 113, 113, 0.2); color: #f87171; }
+.success-message { background-color: rgba(74, 222, 128, 0.2); color: #4ade80; }
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: $secondary-text;
+  a {
+    color: $primary-color;
+    font-weight: 600;
+    &:hover { text-decoration: underline; }
+  }
+}
