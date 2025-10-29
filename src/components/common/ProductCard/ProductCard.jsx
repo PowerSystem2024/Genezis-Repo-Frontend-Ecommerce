@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiShoppingCart, FiLoader } from 'react-icons/fi';
 import { useCart } from '../../../context/CartContext';
+import { formatCurrency } from '../../../utils/formatCurrency'; // <-- IMPORTAR
 import './ProductCard.scss';
 
 // El componente ahora recibe 'viewMode'
 const ProductCard = ({ product, categoryName, viewMode = 'grid' }) => {
   const { addToCart } = useCart();
   const [isAdding, setIsAdding] = useState(false);
-  console.log('Datos del producto recibidos en ProductCard:', product);
-
-  
+  // console.log('Datos del producto recibidos en ProductCard:', product); // Comentado o eliminado si ya no es necesario
 
   if (!product) {
     return null;
@@ -23,14 +22,14 @@ const ProductCard = ({ product, categoryName, viewMode = 'grid' }) => {
       setIsAdding(false);
     }, 1000);
   };
-  
+
   // Usamos una clase condicional para cambiar el layout
   return (
     <div className={`product-card product-card--${viewMode}`}>
       <Link to={`/products/${product.id}`} className="product-card__image-link">
         <img src={product.coverimageurl} alt={product.name} className="product-card__image" />
       </Link>
-      
+
       <div className="product-card__info">
         <span className="product-card__category">{categoryName}</span>
         <h3 className="product-card__name">
@@ -41,9 +40,10 @@ const ProductCard = ({ product, categoryName, viewMode = 'grid' }) => {
       </div>
 
       <div className="product-card__actions">
-        <p className="product-card__price">${parseFloat(product.price).toFixed(2)}</p>
-        <button 
-          className="product-card__cart-btn" 
+        {/* --- MODIFICACIÓN AQUÍ --- */}
+        <p className="product-card__price">{formatCurrency(product.price)}</p>
+        <button
+          className="product-card__cart-btn"
           onClick={handleAddToCart}
           disabled={isAdding}
         >

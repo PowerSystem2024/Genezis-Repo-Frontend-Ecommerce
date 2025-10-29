@@ -1,25 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  getAllProducts, 
-  createProduct, 
-  updateProduct, 
-  deleteProduct, 
+import {
+  getAllProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 } from '../../../services/productService';
 import { getAllCategories } from '../../../services/categoryService';
 import { FiUploadCloud } from 'react-icons/fi';
+import { formatCurrency } from '../../../utils/formatCurrency'; // <-- IMPORTAR
 import './AdminProducts.scss';
 
 // --- Subcomponente del Formulario (Modal) ---
+// (El formulario maneja números crudos, no necesita formateo aquí)
 const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
-  const [product, setProduct] = useState(() => {
+  // ... (código existente del formulario sin cambios en el formateo) ...
+    const [product, setProduct] = useState(() => {
     const initialState = { name: '', description: '', price: '', stock: '', categoryID: '' };
     if (!currentProduct) return initialState;
     return {
       ...currentProduct,
+      // Aseguramos que el precio se maneje como string en el input,
+      // pero podríamos necesitar convertirlo a número al guardar si la API lo requiere.
+      price: String(currentProduct.price || ''),
+      stock: String(currentProduct.stock || ''),
       categoryID: currentProduct.categoryid || '',
     };
   });
-  
+
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(currentProduct?.coverimageurl || '');
 
@@ -38,7 +45,14 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(product, imageFile);
+    // Aseguramos enviar los valores numéricos correctamente si la API los espera así
+    const productToSend = {
+        ...product,
+        price: parseFloat(product.price) || 0,
+        stock: parseInt(product.stock, 10) || 0,
+        categoryID: parseInt(product.categoryID, 10) || null // o el valor que corresponda
+    };
+    onSave(productToSend, imageFile);
   };
 
   return (
@@ -74,6 +88,7 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
           <div className="form-row">
             <div className="form-group">
               <label>Precio</label>
+              {/* Mantenemos type="number" para validación del navegador, step para decimales */}
               <input type="number" name="price" value={product.price} onChange={handleChange} required step="0.01" min="0" />
             </div>
             <div className="form-group">
@@ -88,7 +103,7 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
               {Array.isArray(categories) && categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
             </select>
           </div>
-          
+
           <div className="form-actions">
             <button type="button" onClick={onCancel}>Cancelar</button>
             <button type="submit">Guardar</button>
@@ -106,14 +121,13 @@ const AdminProducts = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
 
   const fetchProducts = async () => {
     try {
       const productsData = await getAllProducts();
-      // Asegurarse de que estamos trabajando con un array
       const productsArray = Array.isArray(productsData) ? productsData : productsData?.products || [];
       setProducts(productsArray);
     } catch (err) {
@@ -131,26 +145,22 @@ const AdminProducts = () => {
           fetchProducts(),
           getAllCategories().then(setCategories)
         ]);
-      } catch (err) {
-        setError('Error al cargar datos iniciales.');
-      } finally {
+      }  finally {
         setLoading(false);
       }
     };
     loadData();
   }, []);
-  
+
   const handleSave = async (productData, imageFile) => {
     setError('');
-    
+
     try {
       if (currentProduct && currentProduct.id) {
-        // --- MODO EDICIÓN UNIFICADO ---
         const updatedProduct = await updateProduct(currentProduct.id, productData, imageFile);
         setProducts(products.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
-        
+
       } else {
-        // --- MODO CREACIÓN ---
         const newProduct = await createProduct(productData, imageFile);
         setProducts(prevProducts => [...prevProducts, newProduct]);
       }
@@ -190,16 +200,16 @@ const AdminProducts = () => {
       </div>
 
       {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
-      
+
       {isFormOpen && (
-        <ProductForm 
+        <ProductForm
           currentProduct={currentProduct}
           onSave={handleSave}
           onCancel={() => { setIsFormOpen(false); setCurrentProduct(null); }}
           categories={categories}
         />
       )}
-      
+
       <div className="table-wrapper">
         <table>
           <thead>
@@ -220,7 +230,8 @@ const AdminProducts = () => {
                   <img src={product.coverimageurl} alt={product.name} className="product-table-image" />
                 </td>
                 <td>{product.name}</td>
-                <td>${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
+                {/* --- MODIFICACIÓN AQUÍ --- */}
+                <td>{formatCurrency(product.price)}</td>
                 <td>{product.stock}</td>
                 <td className="actions-cell">
                   <button onClick={() => { setCurrentProduct(product); setIsFormOpen(true); }}>Editar</button>

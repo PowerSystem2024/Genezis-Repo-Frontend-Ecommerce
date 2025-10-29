@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { FiTrash2 } from 'react-icons/fi';
+import { formatCurrency } from '../../utils/formatCurrency'; // <-- IMPORTAR
 import './Cart.scss';
 
 // Componente interno para el resumen
@@ -10,7 +11,8 @@ const CartSummary = ({ total }) => (
     <h2>Resumen de compra</h2>
     <div className="summary-row">
       <span>Productos ({total.itemCount})</span>
-      <span>${total.price}</span>
+      {/* --- MODIFICACIÓN AQUÍ --- */}
+      <span>{formatCurrency(total.price)}</span>
     </div>
     <div className="summary-row">
       <span>Envío</span>
@@ -18,7 +20,8 @@ const CartSummary = ({ total }) => (
     </div>
     <div className="summary-row total-row">
       <span>Total</span>
-      <span>${total.price}</span>
+      {/* --- MODIFICACIÓN AQUÍ --- */}
+      <span>{formatCurrency(total.price)}</span>
     </div>
     <Link to="/checkout" className="cart__cta-btn">
       Continuar compra
@@ -30,9 +33,11 @@ const Cart = () => {
   const { items, removeFromCart, updateQuantity } = useCart();
 
   const totals = useMemo(() => {
-    const price = items.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0).toFixed(2);
+    // Calculamos el precio sin formatear para usarlo en cálculos
+    const rawPrice = items.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0);
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-    return { price, itemCount };
+    // Devolvemos el precio crudo para el resumen, que lo formateará
+    return { price: rawPrice, itemCount };
   }, [items]);
 
   if (items.length === 0) {
@@ -60,17 +65,19 @@ const Cart = () => {
                 <button onClick={() => removeFromCart(item.id)} className="item-remove">Eliminar</button>
               </div>
               <div className="item-quantity">
-                <input 
+                <input
                   type="number"
                   min="1"
                   value={item.quantity}
                   onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
                 />
               </div>
-              <p className="item-price">${(parseFloat(item.price) * item.quantity).toFixed(2)}</p>
+              {/* --- MODIFICACIÓN AQUÍ --- */}
+              <p className="item-price">{formatCurrency(parseFloat(item.price) * item.quantity)}</p>
             </div>
           ))}
         </main>
+        {/* Pasamos el objeto totals completo */}
         <CartSummary total={totals} />
       </div>
     </div>

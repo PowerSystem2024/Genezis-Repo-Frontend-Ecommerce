@@ -1,19 +1,20 @@
-import React, { useRef } from 'react'; // <-- COMA ELIMINADA
+import React, { useRef } from 'react';
 import { FiX, FiDownload } from 'react-icons/fi';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import logoGenezis from '../../../assets/images/logogenezis.png';
+import { formatCurrency } from '../../../utils/formatCurrency'; // <-- IMPORTAR
 import './OrderDetailModal.scss';
 
 const OrderDetailModal = ({ order, isLoading, onClose }) => {
   const invoiceRef = useRef(null);
 
   const handleDownloadPdf = () => {
-    const input = invoiceRef.current;
+    // ... (código existente para PDF sin cambios) ...
+     const input = invoiceRef.current;
     if (!input) return;
 
     const downloadBtn = input.querySelector('.download-btn-wrapper');
-    // Usamos 'visibility' para no afectar el layout al ocultar el botón
     if (downloadBtn) downloadBtn.style.visibility = 'hidden';
 
     html2canvas(input, {
@@ -22,13 +23,13 @@ const OrderDetailModal = ({ order, isLoading, onClose }) => {
       backgroundColor: '#ffffff'
     }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4'); // p = portrait, mm = millimeters, a4
+      const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
+
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`factura_orden_${order.id}.pdf`);
-      
+
       if (downloadBtn) downloadBtn.style.visibility = 'visible';
     });
   };
@@ -51,12 +52,18 @@ const OrderDetailModal = ({ order, isLoading, onClose }) => {
     );
   }
 
+  // Calculamos los subtotales aquí para asegurar que sean números antes de formatear
+  const itemsWithSubtotal = order.items.map(item => ({
+      ...item,
+      subtotal: item.quantity * parseFloat(item.priceatpurchase || 0)
+  }));
+
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content large" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Detalle de la Orden #{order.id}</h2>
-          {/* Mantenemos el botón de descarga aquí para que no se oculte con el scroll */}
           <div className="download-btn-wrapper">
             <button className="download-btn" onClick={handleDownloadPdf}>
                 <FiDownload /> Descargar PDF
@@ -64,7 +71,7 @@ const OrderDetailModal = ({ order, isLoading, onClose }) => {
           </div>
           <button onClick={onClose} className="close-btn"><FiX /></button>
         </div>
-        
+
         <div className="modal-body">
             <div className="invoice-container a4-style" ref={invoiceRef}>
                 <header className="invoice-header-a4">
@@ -88,8 +95,9 @@ const OrderDetailModal = ({ order, isLoading, onClose }) => {
                 <section className="customer-details-a4">
                     <p><strong>Cliente:</strong> {order.firstname} {order.lastname}</p>
                     <p><strong>Email:</strong> {order.email}</p>
+                    {/* Podrías añadir más detalles del cliente si están disponibles en 'order' */}
                 </section>
-            
+
                 <table className="items-table a4-style">
                     <thead>
                     <tr>
@@ -100,25 +108,29 @@ const OrderDetailModal = ({ order, isLoading, onClose }) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {order.items.map((item, index) => (
+                    {/* Usamos itemsWithSubtotal que ya tiene el subtotal calculado */}
+                    {itemsWithSubtotal.map((item, index) => (
                         <tr key={item.productid || index}>
-                        <td>{item.productName}</td>
+                        <td>{item.productName || `Producto ID: ${item.productid}`}</td> {/* Muestra nombre o ID */}
                         <td>{item.quantity}</td>
-                        <td>${parseFloat(item.priceatpurchase).toFixed(2)}</td>
-                        <td>${(item.quantity * parseFloat(item.priceatpurchase)).toFixed(2)}</td>
+                        {/* --- MODIFICACIÓN AQUÍ --- */}
+                        <td>{formatCurrency(item.priceatpurchase)}</td>
+                        {/* --- MODIFICACIÓN AQUÍ --- */}
+                        <td>{formatCurrency(item.subtotal)}</td>
                         </tr>
                     ))}
                     </tbody>
                     <tfoot>
                       <tr>
                         <td colSpan="3" className="total-label">TOTAL:</td>
-                        <td className="total-amount">${parseFloat(order.totalamount).toFixed(2)}</td>
+                        {/* --- MODIFICACIÓN AQUÍ --- */}
+                        <td className="total-amount">{formatCurrency(order.totalamount)}</td>
                       </tr>
                     </tfoot>
                 </table>
-                
+
                 <footer className="invoice-footer-a4">
-                    <p>CAE N°: 12345678901234 | Vto. CAE: {formatDate(new Date())}</p>
+                    <p>CAE N°: 12345678901234 | Vto. CAE: {formatDate(new Date())}</p> {/* Ejemplo */}
                     <p>Documento no válido como factura</p>
                 </footer>
             </div>

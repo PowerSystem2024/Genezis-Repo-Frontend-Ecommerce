@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProductById } from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
-import { useCart } from '../../context/CartContext'; // Importación correcta
+import { useCart } from '../../context/CartContext';
 import { FiShoppingCart } from 'react-icons/fi';
+import { formatCurrency } from '../../utils/formatCurrency'; // <-- IMPORTAR
 import './ProductDetail.scss';
 
 const ProductDetail = () => {
-  // --- LA LLAMADA AL HOOK DEBE ESTAR AQUÍ, DENTRO DEL COMPONENTE ---
   const { addToCart } = useCart();
-  
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [category, setCategory] = useState(null);
@@ -26,7 +25,7 @@ const ProductDetail = () => {
           getProductById(productId),
           getAllCategories()
         ]);
-        
+
         setProduct(productData);
 
         const foundCategory = categoriesData.find(cat => cat.id === productData.categoryid);
@@ -69,18 +68,19 @@ const ProductDetail = () => {
               </Link>
             )}
             <h1 className="product-detail__name">{product.name}</h1>
-            <p className="product-detail__price">${parseFloat(product.price).toFixed(2)}</p>
+            {/* --- MODIFICACIÓN AQUÍ --- */}
+            <p className="product-detail__price">{formatCurrency(product.price)}</p>
             <p className="product-detail__description">{product.description}</p>
-            
+
             <div className="product-detail__stock">
-              Disponibilidad: 
+              Disponibilidad:
               <span className={product.stock > 0 ? 'stock-status available' : 'stock-status unavailable'}>
                 {product.stock > 0 ? `En Stock (${product.stock} unidades)` : 'Agotado'}
               </span>
             </div>
 
-            <button 
-              className="product-detail__add-to-cart-btn" 
+            <button
+              className="product-detail__add-to-cart-btn"
               disabled={product.stock === 0}
               onClick={() => addToCart(product)}
             >
