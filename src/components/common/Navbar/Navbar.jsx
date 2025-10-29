@@ -26,6 +26,9 @@ const Navbar = () => {
           
           <nav className="navbar__nav-desktop">
             <Link to="/products" className="navbar__link">Productos</Link>
+            <Link to="/categories" className="navbar__link">Categorías</Link>
+            <Link to="/build-pc" className="navbar__link">Contacto</Link>
+            <Link to="/armar-pc" className="navbar__link">Arma tu PC</Link>
 
             {isAuthenticated && user?.role === 'admin' && (
               <Link to="/admin/products" className="navbar__link">Admin</Link>

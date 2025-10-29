@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import HeroCarousel from '../../components/common/HeroCarousel/HeroCarousel';
 import ProductCardHome from '../../components/common/ProductCardHome/ProductCardHome';
 import VisualCategoryGrid from '../../components/common/VisualCategoryGrid/VisualCategoryGrid';
+import BrandsCarousel from '../../components/common/BrandsCarousel/BrandsCarousel';
 import { useProducts } from '../../context/ProductContext';
 import { useCategories } from '../../hooks/useCategories'; // Ya estabas importando esto
 import { FiCpu, FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Íconos de flechas
@@ -151,14 +152,24 @@ const Home = () => {
         </div>
       </section>
 
+      {/* --- 2. AÑADIR NUEVA SECCIÓN DE MARCAS --- */}
+      <section className="brands-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Marcas que nos acompañan</h2>
+          </div>
+          <BrandsCarousel />
+        </div>
+      </section>
+
       {/* --- Sección Call to Action (Armá tu PC) --- */}
       <section className="cta-section">
          <div className="container">
           <div className="cta-content">
             <FiCpu className="cta-icon" />
             <h2>Armá tu PC a Medida</h2>
-            <p>Seleccioná los componentes que quieras y creá la computadora de tus sueños con nuestro asistente de compatibilidad.</p>
-            <Link to="/build-pc" className="cta-button">Empezar a armar</Link>
+            <p>Seleccioná los componentes que quieras y creá la computadora de tus sueños con ayuda de nuestros expertos.</p>
+            <Link to="/build-pc" className="cta-button">Consulta ahora</Link>
           </div>
         </div>
       </section>

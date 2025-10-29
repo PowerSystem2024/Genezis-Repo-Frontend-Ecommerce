@@ -10,11 +10,11 @@
   padding-right: 1.5rem;
 }
 
-// Estilos del encabezado de sección (sin cambios)
+// Estilos del encabezado de sección
 .section-header {
   text-align: center;
   margin-bottom: 0; // Quitamos el margen inferior para que lo maneje el wrapper
-  flex-grow: 1; // Permite que ocupe el espacio disponible
+  flex-grow: 1; 
   h2 {
     font-size: 2.25rem;
     font-weight: 700;
@@ -29,53 +29,52 @@
   }
 }
 
-// --- NUEVO: Wrapper para el encabezado y la navegación ---
+// Wrapper para el encabezado y la navegación de categorías
 .section-header-wrapper {
   display: flex;
-  justify-content: space-between; // Alinea título a la izquierda, flechas a la derecha
-  align-items: center; // Centra verticalmente
-  margin-bottom: 3rem; // Mantenemos el margen inferior aquí
-  flex-wrap: wrap; // Permite que las flechas bajen en móvil si no caben
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
 
-  // En móvil, centramos todo y ponemos flechas debajo
   @media (max-width: $breakpoint-sm) {
     flex-direction: column;
-    gap: 1rem; // Espacio entre título y flechas
+    gap: 1rem;
     .section-header {
       text-align: center;
     }
     .category-navigation {
       width: 100%;
-      justify-content: center; // Centra las flechas
+      justify-content: center;
     }
   }
 }
 
-// --- NUEVO: Estilos para los botones de navegación de categorías ---
+// Estilos para los botones de navegación de categorías
 .category-navigation {
   display: flex;
   gap: 0.5rem;
-  flex-shrink: 0; // Evita que se encojan
+  flex-shrink: 0;
 }
 
 .category-nav-button {
-  background-color: $dark-card-bg; // Fondo similar a las tarjetas
-  color: $secondary-text; // Color de texto secundario
-  border: 1px solid color.adjust($dark-bg, $lightness: 15%); // Borde sutil
-  border-radius: 50%; // Círculo
-  width: 2.5rem; // Tamaño fijo
+  background-color: $dark-card-bg;
+  color: $secondary-text;
+  border: 1px solid color.adjust($dark-bg, $lightness: 15%);
+  border-radius: 50%;
+  width: 2.5rem;
   height: 2.5rem;
-  display: inline-flex; // Para centrar el icono
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 1.2rem; // Tamaño del icono
+  font-size: 1.2rem;
 
   &:hover:not(:disabled) {
     background-color: color.adjust($dark-card-bg, $lightness: 5%);
-    color: $light-text; // Cambia a texto claro en hover
-    border-color: $primary-color; // Borde primario en hover
+    color: $light-text;
+    border-color: $primary-color;
   }
 
   &:disabled {
@@ -83,9 +82,8 @@
     cursor: not-allowed;
   }
 }
-// --- FIN ESTILOS NUEVOS ---
 
-// --- SECCIÓN DE PRODUCTOS DESTACADOS --- (sin cambios)
+// --- SECCIÓN DE PRODUCTOS DESTACADOS ---
 .featured-products {
   padding-top: 4rem;
   padding-bottom: 4rem;
@@ -119,6 +117,32 @@
     padding-bottom: 6rem;
   }
 }
+
+// --- NUEVO: SECCIÓN DE MARCAS ---
+.brands-section {
+  // Un fondo sutilmente diferente para separar visualmente
+  background-color: $dark-bg; 
+  border-top: 1px solid $dark-card-bg;
+  border-bottom: 1px solid $dark-card-bg;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  
+  @media (min-width: $breakpoint-sm) {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  // La sección de marcas tendrá un header centrado y simple
+  .section-header {
+    margin-bottom: 2.5rem; // Espacio entre el título y el carrusel
+    text-align: center; // Asegura centrado
+    p {
+      display: none; // No necesitamos subtítulo aquí
+    }
+  }
+}
+// --- FIN NUEVA SECCIÓN ---
+
 
 // --- SECCIÓN CTA "ARMÁ TU PC" ---
 .cta-section {

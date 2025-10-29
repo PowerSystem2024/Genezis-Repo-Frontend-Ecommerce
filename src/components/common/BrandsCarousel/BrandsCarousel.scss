@@ -1,0 +1,80 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+// --- Animación de Scroll (Sin cambios) ---
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.brands-carousel {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+
+  // Difuminado en los bordes (Sin cambios)
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 2;
+  }
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, $dark-bg 0%, transparent 100%);
+  }
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, $dark-bg 0%, transparent 100%);
+  }
+}
+
+.brands-track {
+  display: flex;
+  // Ancho total = (10 items) * (200px ancho c/u) * (2 listas)
+  width: calc(200px * 20); 
+  animation: scroll 40s linear infinite;
+  will-change: transform;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+.brand-item {
+  flex-shrink: 0;
+  width: 250px; // Ancho del contenedor de cada logo
+  height: 100px; // Altura fija del contenedor
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem; // Espacio a los lados del logo
+
+  // --- ESTILOS ACTUALIZADOS PARA <img> ---
+  img {
+    // Estas 3 líneas son clave para la adaptación:
+    max-width: 100%; // El logo no puede ser más ancho que el padding (aprox 140px)
+    max-height: 70px; // Altura máxima para todos los logos (¡ajusta esto si es necesario!)
+    object-fit: contain; // Asegura que el logo se vea completo y mantenga su proporción
+
+    // Efecto visual: gris y semitransparente por defecto
+    filter: grayscale(1) opacity(0.6);
+    transition: filter 0.3s ease-out;
+    width: auto; // Asegura que la altura máxima controle el tamaño
+  }
+
+  // --- Efecto Hover sobre el item ---
+  &:hover {
+    img {
+      // Al pasar el mouse, recupera el color y opacidad total
+      filter: grayscale(0) opacity(1);
+    }
+  }
+}
