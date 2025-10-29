@@ -21,3 +21,19 @@ a {
   text-decoration: none;
   color: $primary-color;
 }
+
+// --- Estilos para Footer Fijo ---
+html, body, #root {
+  height: 100%; // Asegura altura completa para los contenedores base
+}
+
+.app-layout {
+  display: flex;          // Usa Flexbox
+  flex-direction: column; // Apila los hijos verticalmente
+  min-height: 100vh;      // Altura mínima = altura de la ventana
+}
+
+.main-content {
+  flex-grow: 1; // Hace que el contenido principal crezca y empuje el footer
+}
+// --- Fin Estilos Footer Fijo ---

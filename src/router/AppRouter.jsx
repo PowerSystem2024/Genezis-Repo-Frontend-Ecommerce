@@ -34,14 +34,15 @@ import AdminRoute from './AdminRoute';
 
 // --- Componente Intermediario para el Layout Público ---
 const MainLayoutWrapper = () => (
-  <>
+  <div className="app-layout">
     <Navbar />
     <CartSidebar />
-    <main>
+    {/* Cambia <main> por un div con clase para controlar el crecimiento */}
+    <div className="main-content">
       <Outlet />
-    </main>
+    </div>
     <Footer />
-  </>
+  </div>
 );
 
 const AppRouter = () => {
