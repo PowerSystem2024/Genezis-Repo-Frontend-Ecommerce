@@ -9,21 +9,21 @@ const carouselSlides = [
     subtitle: 'Encontrá el hardware más potente y los periféricos de mejor calidad para dominar en cada partida.',
     buttonText: 'Ver Productos',
     link: '/products',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCExUsgJXSueZZhZL88Q1BFTP-ZHEVDCLU1DxmBV7vYaMsLkEUXkSDjjjIK1ZotKF9POMZUH9tHtDuxB_u7AmyGSFjew7b1UNRxNyYmAA4AY-8CVWZEy5I2at4dwnDSoAr77hvxLVoHQ-Im8FbLpT0bJhSUfqO1MtHgfX3s2rriPEJxhMshrzmvhiEJCgKQyr27MiI5V3KVPO-WQmFy2Oo489X5sed6XLdVQroJX6aqHIul7Sa0SvdHjPCohtH8sAD-XfN5Urrwrlk-'
+    imageUrl: 'https://www.mielectro.es/blog/wp-content/uploads/2024/10/Mejores-perifericos-gaming.jpg'
   },
   {
     title: 'Inmersión Total',
     subtitle: 'Siente cada detalle con nuestros periféricos de alta fidelidad.',
     buttonText: 'Explorar Periféricos',
     link: '/products?categoryID=10',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDe7syGF4WBIZj1k8Tg14DnaTJIl08hapB9f7VFsFWjlzUZmNYF-Wqq__1TRAB_bC-kxN_sg8_ouGz8jYExaKj9Tf4JJpMSrZPOncLcF134QqyauR-XRQk-s0wo25WKNTDow5UYYY1ImURXNeLkmfWAMgIUqf5pZQjXzlf2mEgtPRbcr6bjFbOQ7FSsPaISuZfjbxcW7wnNOzL6aRhM_uBNoTuY5dyMXQqPId4JbIeJYFkpKv1rehhTnKWSdgojv8uF99eEDefbqmrg'
+    imageUrl: 'https://res.cloudinary.com/diap9hbws/image/upload/v1761713705/Generated_Image_October_29_2025_-_1_51AM_ojeaof.png'
   },
   {
     title: 'Potencia a tu Medida',
     subtitle: 'Crea la computadora de tus sueños con nuestro asistente de compatibilidad.',
     buttonText: 'Armar mi PC',
     link: '/build-pc',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCPYPQstNI33wuKrv78mQjR4aV17b50YBCbTFZyg_Cox5ae7V4gQu34pjm_5fDEBqitY0qLSMb8dobogWSMb97Gk6D2gnEkOJgXSsFmPYNiNOlQm0hMzhl9ZV-mTiRUEabbTsqe-snzikCQg7vNdgqwOzkizyPNT2RgGLn3shOEmmwS25lb0ijgdEkpgPvpWf3IS94HL6t9VkuWBsCty6X34NnKPnuCleyBDnL7uqt5AHBoixo8eIm3rRVtFg2j6bOxbNDf1ILi13GL'
+    imageUrl: 'https://inteligenciaargentina.ar/storage/uploads/s7T1N3tXxrBYY03XH2DnlSR3aLIMiDEYwVVFdAYa.jpg'
   }
 ];
 
