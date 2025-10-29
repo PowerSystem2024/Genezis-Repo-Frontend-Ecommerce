@@ -8,17 +8,17 @@ const paymentLogos = [
   { 
     name: 'Genezis', 
     src: 'https://res.cloudinary.com/diap9hbws/image/upload/v1761717814/Recurso_2_4x_gtbmxd.png', 
-    link: ' ' 
+    //link: ' ' 
   },
   { 
     name: 'Soulware', 
     src: 'https://res.cloudinary.com/diap9hbws/image/upload/v1761717688/ISOLOGO_TRANSPARENTE_2_wmhs2m.png', 
-    link: ' ' 
+    //link: ' ' 
   },
   { 
     name: 'Lycheed', 
     src: 'https://lucianocortez.com.ar/Profile/logoLycheedOS.png', 
-    link: ' ' 
+    //link: ' ' 
   },
   // Puedes añadir más logos aquí si quieres
 ];
