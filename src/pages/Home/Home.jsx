@@ -5,12 +5,15 @@ import ProductCardHome from '../../components/common/ProductCardHome/ProductCard
 import VisualCategoryGrid from '../../components/common/VisualCategoryGrid/VisualCategoryGrid';
 import BrandsCarousel from '../../components/common/BrandsCarousel/BrandsCarousel';
 import { useProducts } from '../../context/ProductContext';
-import { useCategories } from '../../hooks/useCategories'; // Ya estabas importando esto
-import { FiCpu, FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Íconos de flechas
+import { useCategories } from '../../hooks/useCategories';
+// --- 1. IMPORTACIÓN DE FiCpu ELIMINADA ---
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './Home.scss';
 
-// Mapeo de IDs de categoría (esperados de la API) a las imágenes hardcodeadas
-// **IMPORTANTE**: Asegúrate de que estos IDs coincidan con los IDs reales de tu API.
+// --- 2. IMPORTAR EL NUEVO COMPONENTE DE VIDEOS ---
+import YoutubeGrid from '../../components/common/YoutubeGrid/YoutubeGrid';
+
+// Mapeo de IDs de categoría (tu código original)
 const categoryImageMap = {
   1: 'https://tecnovortex.com/wp-content/uploads/2024/09/msi-notebook-gamer.jpg', //notebook
   2: 'https://i.blogs.es/112dac/cpu/840_560.jpeg', //procesadores
@@ -23,20 +26,18 @@ const categoryImageMap = {
   9: 'https://fhgamer.ar/wp-content/uploads/2024/01/f.webp', //pc escritorio
   10: 'https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2024/08/perifericos-gaming-3860923.jpg?tf=3840x', //perifericos
 };
-const defaultCategoryImage = 'https://via.placeholder.com/300x200?text=Categoria'; // Imagen por defecto
+const defaultCategoryImage = 'https://via.placeholder.com/300x200?text=Categoria';
 
-// Configuración de paginación ajustada
-const CATEGORIES_PER_PAGE = 5; // 1 grande + 6 pequeñas
+const CATEGORIES_PER_PAGE = 5;
 
 const Home = () => {
   const { products, loading: productsLoading } = useProducts();
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
-  const [currentPage, setCurrentPage] = useState(0); // Estado para la página actual de categorías
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // Selecciona los primeros 8 productos para destacar
+  // (Tu código de 'featuredProducts' y 'getCategoryNameById' sin cambios)
   const featuredProducts = products.slice(0, 4);
 
-  // Función auxiliar para obtener el nombre de la categoría por ID
   const getCategoryNameById = (id) => {
     if (categoriesLoading) return 'Cargando...';
     const numericId = parseInt(id, 10);
@@ -44,46 +45,41 @@ const Home = () => {
     return category ? category.name : 'Destacado';
   };
 
-  // Genera la lista completa de categorías visuales (nombre, link, imagen)
+  // (Tu código de 'allVisualCategories', 'paginatedCategories', 'totalPages', 'goToNextPage' y 'goToPrevPage' sin cambios)
   const allVisualCategories = useMemo(() => {
     if (categoriesLoading || categoriesError || !Array.isArray(categories)) {
-      return []; // Devuelve vacío si está cargando, hay error o no es un array
+      return [];
     }
-    // Mapea las categorías de la API a la estructura necesaria
     return categories.map(cat => ({
       name: cat.name,
       link: `/products?categoryID=${cat.id}`,
-      // Busca la imagen en el mapeo, si no existe, usa la default
       image: categoryImageMap[cat.id] || defaultCategoryImage,
     }));
-  }, [categories, categoriesLoading, categoriesError]); // Dependencias del useMemo
+  }, [categories, categoriesLoading, categoriesError]);
 
-  // Calcula las categorías a mostrar en la página actual
   const paginatedCategories = useMemo(() => {
     const startIndex = currentPage * CATEGORIES_PER_PAGE;
     const endIndex = startIndex + CATEGORIES_PER_PAGE;
     return allVisualCategories.slice(startIndex, endIndex);
   }, [allVisualCategories, currentPage]);
 
-  // Calcula el número total de páginas necesarias
   const totalPages = useMemo(() => {
     return Math.ceil(allVisualCategories.length / CATEGORIES_PER_PAGE);
   }, [allVisualCategories.length]);
 
-  // Funciones para manejar el cambio de página (con useCallback para optimización)
   const goToNextPage = useCallback(() => {
-    setCurrentPage(prev => (prev + 1 < totalPages ? prev + 1 : prev)); // No ir más allá de la última página
+    setCurrentPage(prev => (prev + 1 < totalPages ? prev + 1 : prev));
   }, [totalPages]);
 
   const goToPrevPage = useCallback(() => {
-    setCurrentPage(prev => (prev > 0 ? prev - 1 : prev)); // No ir antes de la primera página
+    setCurrentPage(prev => (prev > 0 ? prev - 1 : prev));
   }, []);
 
   return (
     <div className="home-page">
       <HeroCarousel />
 
-      {/* --- Sección Productos Destacados --- */}
+      {/* --- Sección Productos Destacados (Tu código sin cambios) --- */}
       <section className="featured-products">
          <div className="container">
           <div className="section-header">
@@ -106,31 +102,29 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- Sección Explorar Categorías --- */}
+      {/* --- Sección Explorar Categorías (Tu código sin cambios) --- */}
       <section className="categories-section-home">
         <div className="container">
-          {/* Wrapper para el título y los botones de navegación */}
           <div className="section-header-wrapper">
             <div className="section-header">
               <h2>Categorías</h2>
               <p>Encuentra exactamente lo que necesitas</p>
             </div>
-            {/* Solo muestra las flechas si hay más de una página */}
             {totalPages > 1 && (
               <div className="category-navigation">
                 <button
                   onClick={goToPrevPage}
-                  disabled={currentPage === 0} // Deshabilitado en la primera página
+                  disabled={currentPage === 0}
                   className="category-nav-button prev"
-                  aria-label="Categorías anteriores" // Accesibilidad
+                  aria-label="Categorías anteriores"
                 >
                   <FiChevronLeft />
                 </button>
                 <button
                   onClick={goToNextPage}
-                  disabled={currentPage === totalPages - 1} // Deshabilitado en la última página
+                  disabled={currentPage === totalPages - 1}
                   className="category-nav-button next"
-                  aria-label="Categorías siguientes" // Accesibilidad
+                  aria-label="Categorías siguientes"
                 >
                   <FiChevronRight />
                 </button>
@@ -138,21 +132,18 @@ const Home = () => {
             )}
           </div>
 
-          {/* Renderizado condicional de la grid o mensajes */}
           {categoriesLoading && <p style={{ textAlign: 'center' }}>Cargando categorías...</p>}
           {categoriesError && <p style={{ textAlign: 'center', color: '#f87171' }}>{categoriesError}</p>}
           {!categoriesLoading && !categoriesError && allVisualCategories.length > 0 && (
-            // Pasa solo las categorías de la página actual al componente Grid
             <VisualCategoryGrid categories={paginatedCategories} />
           )}
-           {/* Mensaje si la API no devuelve categorías o el mapeo falla */}
            {!categoriesLoading && !categoriesError && allVisualCategories.length === 0 && (
              <p style={{ textAlign: 'center' }}>No hay categorías disponibles en este momento.</p>
            )}
         </div>
       </section>
 
-      {/* --- 2. AÑADIR NUEVA SECCIÓN DE MARCAS --- */}
+      {/* --- Sección Marcas (Tu código sin cambios) --- */}
       <section className="brands-section">
         <div className="container">
           <div className="section-header">
@@ -162,17 +153,17 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- Sección Call to Action (Armá tu PC) --- */}
-      <section className="cta-section">
-         <div className="container">
-          <div className="cta-content">
-            <FiCpu className="cta-icon" />
-            <h2>Armá tu PC a Medida</h2>
-            <p>Seleccioná los componentes que quieras y creá la computadora de tus sueños con ayuda de nuestros expertos.</p>
-            <Link to="/build-pc" className="cta-button">Consulta ahora</Link>
+      {/* --- 3. SECCIÓN "Armá tu PC" REEMPLAZADA --- */}
+      <section className="youtube-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Últimas Tendencias</h2>
+            <p>Mira lo último en Hardware Gamer</p>
           </div>
+          <YoutubeGrid />
         </div>
       </section>
+      {/* --- FIN DEL REEMPLAZO --- */}
     </div>
   );
 };

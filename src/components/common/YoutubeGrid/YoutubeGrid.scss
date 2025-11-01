@@ -1,0 +1,72 @@
+@use '../../../styles/variables' as *;
+
+.yt-grid-container {
+  display: grid;
+  gap: 1.5rem;
+  
+  // Layout móvil por defecto (1 columna, se apilan)
+  grid-template-columns: 1fr;
+
+  // Layout Desktop (2 columnas: 2/3 para el grande, 1/3 para los chicos)
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: 2fr 1fr; // Columna grande 2/3, columna chica 1/3
+    // Hacemos que los items se estiren verticalmente para coincidir
+    align-items: stretch; 
+  }
+}
+
+// Columna de videos chicos (solo visible en desktop)
+.yt-small-videos-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // Mismo gap que el grid
+  justify-content: space-between; // Reparte el espacio
+}
+
+.yt-video-wrapper {
+  position: relative;
+  overflow: hidden; // Escondemos el overflow del wrapper principal
+  border-radius: 8px; // Bordes redondeados
+  background-color: $dark-bg; // Fondo mientras carga
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+// --- ESTA ES LA CLAVE DE LA ALINEACIÓN ---
+.yt-video-wrapper.yt-video-small {
+  // Los videos chicos SÍ fuerzan el aspect-ratio
+  padding-top: 56.25%; 
+  height: 0;
+  width: 100%;
+}
+
+.yt-video-wrapper.yt-video-large {
+  // El video grande NO fuerza aspect-ratio, se estira
+  height: 100%; 
+  min-height: 200px; // Altura mínima en móvil
+
+  @media (min-width: $breakpoint-md) {
+    min-height: unset; // Quitamos la altura mínima en desktop
+  }
+}
+// --- FIN DE LA CLAVE DE ALINEACIÓN ---
+
+
+// --- ESTILOS PARA OCULTAR CONTROLES ---
+.yt-iframe-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  iframe {
+    position: absolute;
+    top: -60px; // Mueve el video hacia arriba
+    left: 0;
+    width: 100%;
+    height: calc(100% + 120px); // Lo hace más alto que el contenedor
+    border: 0;
+    pointer-events: none; // Evita que se pueda pausar
+  }
+}

@@ -99,10 +99,9 @@
 }
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); // <-- CAMBIADO DE 1fr a 2 columnas
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   
-  // Esta regla ahora es redundante, pero no hace daño
   @media (min-width: $breakpoint-sm) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -125,7 +124,25 @@
   }
 }
 
-// --- NUEVO: SECCIÓN DE MARCAS ---
+// (Tu slider de categorías que implementamos antes)
+.category-slider-viewport {
+  overflow: hidden;
+}
+.category-slider-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.category-slider-slide {
+  width: 100%;
+  flex-shrink: 0;
+  padding: 0 0.5rem;
+  @media (min-width: $breakpoint-md) {
+    padding: 0 0.75rem;
+  }
+}
+
+
+// --- SECCIÓN DE MARCAS ---
 .brands-section {
   background-color: $dark-bg; 
   border-top: 1px solid $dark-card-bg;
@@ -146,59 +163,15 @@
   }
 }
 
-// --- SECCIÓN CTA "ARMÁ TU PC" ---
-.cta-section {
+// --- 1. SECCIÓN CTA "ARMÁ TU PC" ELIMINADA ---
+// (Todos los estilos .cta-section y .cta-content se eliminan)
+
+// --- 2. NUEVA SECCIÓN DE YOUTUBE AÑADIDA ---
+.youtube-section {
   padding-top: 4rem;
   padding-bottom: 4rem;
   @media (min-width: $breakpoint-sm) {
     padding-top: 6rem;
     padding-bottom: 6rem;
-  }
-}
-.cta-content {
-  background-color: $dark-card-bg;
-  border-radius: 1rem;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-  padding: 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  @media (min-width: $breakpoint-md) {
-    padding: 4rem;
-  }
-
-  .cta-icon {
-    font-size: 4rem;
-    color: $primary-color;
-    margin-bottom: 1rem;
-  }
-  h2 {
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: $light-text;
-    @media (min-width: $breakpoint-md) {
-      font-size: 2.5rem;
-    }
-  }
-  p {
-    color: $secondary-text;
-    margin-top: 1rem;
-    max-width: 40rem;
-  }
-  .cta-button {
-    margin-top: 2rem;
-    background-color: $primary-color;
-    color: white;
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
-    }
   }
 }
