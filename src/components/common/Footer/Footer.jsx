@@ -39,24 +39,18 @@ const Footer = () => {
           <ul className="footer__list">
             <li><Link to="/" className="footer__link">Inicio</Link></li>
             <li><Link to="/products" className="footer__link">Productos</Link></li>
-            <li><Link to="/build-pc" className="footer__link">Armá tu PC</Link></li>
             <li><Link to="/contact" className="footer__link">Contacto</Link></li>
-          </ul>
-        </div>
-        <div className="footer__section">
-          <h4 className="footer__title">Soporte</h4>
-          <ul className="footer__list">
-            <li><Link to="/faq" className="footer__link">Preguntas Frecuentes</Link></li>
-            <li><Link to="/terms" className="footer__link">Términos y Condiciones</Link></li>
-            <li><Link to="/privacy" className="footer__link">Política de Privacidad</Link></li>
           </ul>
         </div>
         <div className="footer__section">
           <h4 className="footer__title">Seguinos</h4>
           <ul className="footer__list footer__list--social">
-            <li><a href="#" className="footer__link">FB</a></li>
-            <li><a href="#" className="footer__link">TW</a></li>
-            <li><a href="#" className="footer__link">IG</a></li>
+            <li><a href="https://www.instagram.com/genezis_devs/" className="footer__link">
+              <i className="bi bi-instagram"></i></a></li>
+            <li><a href="https://www.facebook.com/share/16avYte77r/" className="footer__link">
+              <i className="bi bi-facebook"></i></a></li>
+            <li><a href="https://www.youtube.com/@Genezis-TUP" className="footer__link">
+              <i className="bi bi-youtube"></i></a></li>
           </ul>
         </div>
       </div>
@@ -67,11 +61,8 @@ const Footer = () => {
           <p className="footer__copyright">&copy; {currentYear} GamerStore. Todos los derechos reservados.</p>
 
           <div className="footer__logos">
-            {/* Iteramos sobre el nuevo array paymentLogos */}
             {paymentLogos.map((logo, index) => (
-              // Verificamos si hay link
               logo.link ? (
-                // Si hay link, envolvemos en <a>
                 <a
                   key={index}
                   href={logo.link}

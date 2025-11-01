@@ -1,5 +1,6 @@
 @use 'sass:color'; // Directiva para usar funciones de color de SASS (¡Agrégala al inicio!)
 @import '../../../styles/variables'; // Importa tus variables globales
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 .footer {
   background-color: $dark-card-bg; // Fondo oscuro para el footer
@@ -60,8 +61,12 @@
     &--social {
       display: flex; // Alinea los iconos/links horizontalmente
       gap: 1rem; // Espacio entre iconos/links
-      // Si usas iconos (ej. react-icons):
-      // a svg { font-size: 1.5rem; }
+
+      i {
+        font-size: 1.4rem;
+        vertical-align: middle;
+        // Quita el margen inferior en esta lista
+      }
     }
   }
 
