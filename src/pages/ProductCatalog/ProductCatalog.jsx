@@ -5,8 +5,13 @@ import { getAllCategories } from '../../services/categoryService';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import CategorySidebar from '../../components/common/CategorySidebar/CategorySidebar';
 import FilterSidebar from '../../components/common/FilterSidebar/FilterSidebar';
+// --- 1. IMPORTAR EL NUEVO COMPONENTE ---
+import Pagination from '../../components/common/Pagination/Pagination';
 import { FiGrid, FiList, FiMenu, FiFilter, FiSearch, FiX } from 'react-icons/fi';
 import './ProductCatalog.scss';
+
+// --- 2. DEFINIR LA CONSTANTE DE PAGINACIÓN ---
+const PRODUCTS_PER_PAGE = 9;
 
 const ProductCatalog = () => {
   const { products, loading: productsLoading, error: productsError } = useProducts();
@@ -19,14 +24,17 @@ const ProductCatalog = () => {
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
   const location = useLocation();
 
+  // --- 3. AÑADIR ESTADO PARA LA PÁGINA ACTUAL ---
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
-    // ... (sin cambios aquí)
+    // ... (sin cambios en fetchCategories)
     const fetchCategories = async () => { try { setLoadingCategories(true); const data = await getAllCategories(); setCategories(data); } catch (err) { console.error("Error al cargar categorías:", err); } finally { setLoadingCategories(false); } };
     fetchCategories();
   }, []);
   
   useEffect(() => {
-    // ... (sin cambios aquí)
+    // ... (sin cambios en el manejo de 'search' de la URL)
     const params = new URLSearchParams(location.search);
     const searchFromURL = params.get('search');
     if (searchFromURL) {
@@ -34,8 +42,17 @@ const ProductCatalog = () => {
     }
   }, [location.search]);
 
+  // --- 4. EFECTO PARA RESETEAR LA PÁGINA AL FILTRAR ---
+  // Cuando el usuario cambia de categoría, busca o reordena,
+  // debemos volver a la página 1.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, searchTerm, sortOrder]);
+
+
+  // Memo para la lista COMPLETA de productos filtrados y ordenados
   const filteredAndSortedProducts = useMemo(() => {
-    // ... (sin cambios en la lógica de filtrado)
+    // ... (sin cambios en esta lógica)
     let result = [...products];
     if (activeCategory !== 'all') { result = result.filter(p => p.categoryid === activeCategory); }
     if (searchTerm) { result = result.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.description.toLowerCase().includes(searchTerm.toLowerCase())); }
@@ -47,16 +64,47 @@ const ProductCatalog = () => {
     return result;
   }, [products, activeCategory, searchTerm, sortOrder]);
 
-  const handleCategorySelect = (categoryId) => { setActiveCategory(categoryId); setIsFilterSidebarOpen(false); };
+  // --- 5. NUEVO MEMO PARA CALCULAR LA PAGINACIÓN ---
+  // Derivamos la lista paginada y el total de páginas
+  // a partir de la lista filtrada completa.
+  const { paginatedProducts, totalPages } = useMemo(() => {
+    const total = filteredAndSortedProducts.length;
+    const totalPages = Math.ceil(total / PRODUCTS_PER_PAGE);
+    
+    const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    const endIndex = startIndex + PRODUCTS_PER_PAGE;
+    
+    const paginatedProducts = filteredAndSortedProducts.slice(startIndex, endIndex);
+    
+    return { paginatedProducts, totalPages };
+  }, [filteredAndSortedProducts, currentPage]); // Se recalcula si la lista filtrada o la página actual cambian
+
+  // --- 6. NUEVO HANDLER PARA CAMBIAR DE PÁGINA ---
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Opcional: llevar al usuario al inicio de la lista de productos
+    window.scrollTo({
+      top: 0, // Ajusta si tienes un header sticky
+      behavior: 'smooth',
+    });
+  };
+
+  const handleCategorySelect = (categoryId) => { 
+    setActiveCategory(categoryId); 
+    setIsFilterSidebarOpen(false); 
+  };
   
   const renderProductList = () => {
-    // ... (sin cambios aquí)
+    // ... (sin cambios en los loaders/errors)
     if (productsLoading || loadingCategories) return <p>Cargando...</p>;
     if (productsError) return <p className="error-message">{productsError}</p>;
+
+    // --- 7. MODIFICACIÓN: USAR LA LISTA PAGINADA ---
     return (
       <div className={viewMode === 'grid' ? 'product-grid' : 'product-list'}>
-        {filteredAndSortedProducts.length > 0 ? (
-          filteredAndSortedProducts.map(product => {
+        {/* Usamos 'paginatedProducts' en lugar de 'filteredAndSortedProducts' */}
+        {paginatedProducts.length > 0 ? (
+          paginatedProducts.map(product => {
             const category = categories.find(cat => cat.id === product.categoryid);
             const categoryName = category ? category.name : 'Sin Categoría';
             return <ProductCard key={product.id} product={product} categoryName={categoryName} viewMode={viewMode} />;
@@ -80,17 +128,14 @@ const ProductCatalog = () => {
         </aside>
 
         <main className="product-list-container">
-          {/* --- 1. BLOQUE DE BOTONES MOVIDO DE AQUÍ --- */}
-          
+          {/* ... (sin cambios en el header) ... */}
           <div className="product-list-header">
             <h1>{categories.find(c => c.id === activeCategory)?.name || 'Todos los productos'}</h1>
             
-            {/* --- 2. BLOQUE DE BOTONES PEGADO AQUÍ --- */}
             <div className="mobile-filter-buttons">
               <button onClick={() => setIsFilterSidebarOpen(true)}><FiMenu /> Categorías</button>
               <button className="btn-filters-mobile"><FiFilter /> Filtros</button>
             </div>
-            {/* --- FIN DEL BLOQUE MOVIDO --- */}
             
             <div className="search-control">
               <FiSearch />
@@ -98,7 +143,7 @@ const ProductCatalog = () => {
                 type="text"
                 placeholder="Buscar en esta categoría..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.g.target.value)}
               />
               {searchTerm && <button onClick={() => setSearchTerm('')}><FiX /></button>}
             </div>
@@ -116,6 +161,13 @@ const ProductCatalog = () => {
           </div>
           
           {renderProductList()}
+
+          {/* --- 8. AÑADIR EL COMPONENTE DE PAGINACIÓN --- */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </main>
       </div>
     </div>

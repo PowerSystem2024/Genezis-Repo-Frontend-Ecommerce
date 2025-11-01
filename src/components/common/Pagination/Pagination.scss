@@ -1,0 +1,93 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 3rem; // Espacio sobre la paginación
+  padding-top: 2rem;
+  border-top: 1px solid color.adjust($dark-bg, $lightness: 10%);
+  flex-wrap: nowrap; // Evitar que se rompa en líneas
+  width: 100%;
+
+  &__btn {
+    background-color: $dark-card-bg;
+    border: 1px solid color.adjust($dark-bg, $lightness: 15%);
+    color: $secondary-text;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap; // Evitar que el texto se rompa
+
+    &:hover:not(:disabled) {
+      border-color: $primary-color;
+      color: $primary-color;
+      background-color: color.adjust($dark-bg, $lightness: 5%);
+    }
+
+    &.active {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: $light-text;
+      font-weight: 600;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      &:hover {
+        border-color: color.adjust($dark-bg, $lightness: 15%);
+        color: $secondary-text;
+        background-color: $dark-card-bg;
+      }
+    }
+
+    // Estilos para los botones de número
+    &--num {
+      min-width: 40px; // Ancho fijo para números
+      justify-content: center;
+    }
+  }
+
+  &__numbers {
+    display: none; // Oculto en móvil
+    
+    @media (min-width: $breakpoint-sm) { // Visible en tablet+
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  &__dots {
+    color: $secondary-text;
+    padding: 0 0.25rem;
+    display: none; // Oculto en móvil
+    
+    @media (min-width: $breakpoint-sm) { // Visible en tablet+
+       display: inline-block;
+    }
+  }
+
+  // En móvil, solo mostramos "Anterior" y "Siguiente"
+  @media (max-width: ($breakpoint-sm - 1px)) {
+    &__btn--prev span,
+    &__btn--next span {
+      display: none; // Ocultar texto, dejar solo íconos
+    }
+    &__btn--prev,
+    &__btn--next {
+      padding: 0.5rem; // Hacerlos cuadrados
+      min-width: 40px;
+      justify-content: center;
+    }
+  }
+}
