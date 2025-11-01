@@ -65,10 +65,6 @@ const ProductDetail = () => {
     switch (activeTab) {
       case 'especificaciones':
         return <ProductSpecs specs={product.specs} />;
-      case 'preguntas':
-        return <p>Sección de preguntas aún no implementada.</p>;
-      case 'compatibilidades':
-        return <p>Sección de compatibilidades aún no implementada.</p>;
       default:
         return null;
     }

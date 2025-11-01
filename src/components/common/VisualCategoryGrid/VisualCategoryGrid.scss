@@ -1,12 +1,28 @@
 @use '../../../styles/variables' as *;
 @use 'sass:color';
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); // Sube ligeramente
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 // Contenedor principal de la grid
 .visual-categories-grid {
   display: grid;
   gap: 1rem;
   // Mobile: 2 columnas uniformes
   grid-template-columns: repeat(2, 1fr);
+  
+  // --- 1. MODIFICACIÓN ---
+  // Añadimos una altura mínima para las filas en móvil.
+  grid-auto-rows: minmax(150px, auto);
+  animation: fadeIn 0.4s ease-out;
 
   // Tablet y Desktop: Layout asimétrico (1 grande + 6 pequeños)
   @media (min-width: $breakpoint-md) {
@@ -27,9 +43,10 @@
   transition: transform 0.3s ease-out;
   background-color: $dark-card-bg; // Fondo mientras carga
 
-  // Por defecto, todos tienen aspect-ratio (útil para los pequeños)
-  // El grande lo sobrescribirá con grid-row span
-  aspect-ratio: 16 / 9; // Ajusta si prefieres más cuadrado (ej: 4 / 3)
+  // --- 2. MODIFICACIÓN ---
+  // Quitamos el aspect-ratio para que la tarjeta no se "alargue".
+  // La altura ahora la define el 'grid-auto-rows' del contenedor.
+  // aspect-ratio: 16 / 9; // <-- ESTA LÍNEA SE ELIMINA O COMENTA
 
   &:hover {
     transform: scale(1.03);
@@ -43,8 +60,8 @@
 
   // --- Layout Asimétrico para Tablet/Desktop ---
   @media (min-width: $breakpoint-md) {
-    aspect-ratio: unset; // Quitamos aspect-ratio en pantallas grandes para que la grid controle la altura
-
+    // aspect-ratio: unset; // Esta línea ya no es necesaria si quitamos el base
+    
     // --- ESTILO PARA EL PRIMER ITEM (EL GRANDE) ---
     &:first-child {
       grid-column: span 2; // Ocupa 2 columnas
@@ -66,12 +83,13 @@
     }
   }
 
-   // --- Layout Simple para Móvil ---
-   // (Asegura que en móvil no se apliquen los spans)
+   // --- Layout Asimétrico para Móvil ---
+   // (Asegura que en móvil se apliquen los spans)
    @media (max-width: ($breakpoint-md - 1px)) {
      &:first-child {
-       grid-column: unset;
-       grid-row: unset;
+       // --- 3. MODIFICACIÓN ---
+       // En lugar de 'unset', le decimos que ocupe 2 filas
+       grid-row: span 2; 
      }
      // Mantenemos el aspect ratio por defecto definido antes
    }
@@ -80,11 +98,19 @@
 
 // Estilos para la imagen de fondo (común)
 .visual-category-image {
-  display: block; // Importante para quitar espacio extra si no es position:absolute
+  display: block; 
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease-out;
+  // --- AÑADIDO PARA EL LAYOUT GRANDE DE ESCRITORIO ---
+  // (Asegura que la imagen llene el contenedor cuando no es position:absolute)
+  @media (min-width: $breakpoint-md) {
+    &:not(:first-child) {
+      position: absolute;
+      inset: 0;
+    }
+  }
 }
 
 // Estilos para la capa semitransparente (común)
@@ -95,18 +121,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem; // Reducido un poco para items pequeños
+  padding: 0.5rem; 
   transition: background-color 0.3s ease-out;
-  text-align: center; // Centramos texto por si hay saltos de línea
+  text-align: center; 
 }
 
 // Estilos para el nombre de la categoría (común)
 .visual-category-name {
   color: $light-text;
-  font-size: 1rem; // Tamaño base (puede ser ajustado para el grande)
+  font-size: 1rem; 
   font-weight: 600;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
    @media (min-width: $breakpoint-md) {
-    font-size: 1.1rem; // Ligeramente más grande en tablet/desktop para items pequeños
+    font-size: 1.1rem; 
   }
 }

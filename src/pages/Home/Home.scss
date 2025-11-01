@@ -13,7 +13,8 @@
 // Estilos del encabezado de sección
 .section-header {
   text-align: center;
-  margin-bottom: 3rem;
+  
+  margin-bottom: 3rem; 
   flex-grow: 1; 
   h2 {
     font-size: 2.25rem;
@@ -36,6 +37,10 @@
   align-items: center;
   margin-bottom: 3rem;
   flex-wrap: wrap;
+
+  .section-header {
+    margin-bottom: 0; 
+  }
 
   @media (max-width: $breakpoint-sm) {
     flex-direction: column;
@@ -94,8 +99,12 @@
 }
 .products-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  // --- INICIO DE LA MODIFICACIÓN ---
+  grid-template-columns: repeat(2, 1fr); // <-- CAMBIADO DE 1fr a 2 columnas
+  // --- FIN DE LA MODIFICACIÓN ---
   gap: 1.5rem;
+  
+  // Esta regla ahora es redundante, pero no hace daño
   @media (min-width: $breakpoint-sm) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -120,7 +129,6 @@
 
 // --- NUEVO: SECCIÓN DE MARCAS ---
 .brands-section {
-  // Un fondo sutilmente diferente para separar visualmente
   background-color: $dark-bg; 
   border-top: 1px solid $dark-card-bg;
   border-bottom: 1px solid $dark-card-bg;
@@ -132,17 +140,13 @@
     padding-bottom: 5rem;
   }
 
-  // La sección de marcas tendrá un header centrado y simple
   .section-header {
-    margin-bottom: 2.5rem; // Espacio entre el título y el carrusel
-    text-align: center; // Asegura centrado
+    text-align: center;
     p {
-      display: none; // No necesitamos subtítulo aquí
+      display: none; 
     }
   }
 }
-// --- FIN NUEVA SECCIÓN ---
-
 
 // --- SECCIÓN CTA "ARMÁ TU PC" ---
 .cta-section {
