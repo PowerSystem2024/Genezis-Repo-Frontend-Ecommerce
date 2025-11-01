@@ -138,19 +138,6 @@ const ProductDetail = () => {
                 Especificaciones
               </button>
             )}
-            
-            <button
-              className={`tabs-nav__btn ${activeTab === 'preguntas' ? 'active' : ''}`}
-              onClick={() => setActiveTab('preguntas')}
-            >
-              Preguntas
-            </button>
-            <button
-              className={`tabs-nav__btn ${activeTab === 'compatibilidades' ? 'active' : ''}`}
-              onClick={() => setActiveTab('compatibilidades')}
-            >
-              Compatibilidades
-            </button>
           </nav>
           <div className="tabs-content">
             {renderTabContent()}
