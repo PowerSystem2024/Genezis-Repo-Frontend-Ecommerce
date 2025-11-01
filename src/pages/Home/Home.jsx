@@ -6,11 +6,10 @@ import VisualCategoryGrid from '../../components/common/VisualCategoryGrid/Visua
 import BrandsCarousel from '../../components/common/BrandsCarousel/BrandsCarousel';
 import { useProducts } from '../../context/ProductContext';
 import { useCategories } from '../../hooks/useCategories';
-// --- 1. IMPORTACIÓN DE FiCpu ELIMINADA ---
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+// --- 1. IMPORTAR FiArrowRight ---
+import { FiChevronLeft, FiChevronRight, FiArrowRight } from 'react-icons/fi';
 import './Home.scss';
 
-// --- 2. IMPORTAR EL NUEVO COMPONENTE DE VIDEOS ---
 import YoutubeGrid from '../../components/common/YoutubeGrid/YoutubeGrid';
 
 // Mapeo de IDs de categoría (tu código original)
@@ -99,6 +98,18 @@ const Home = () => {
               ))}
             </div>
           )}
+
+          {/* --- 2. BOTÓN "VER TODOS" AÑADIDO --- */}
+          {!productsLoading && products.length > 0 && (
+            <div className="section-footer">
+              <Link to="/products" className="cta-button-outline">
+                <span>Ver todos los productos</span>
+                <FiArrowRight />
+              </Link>
+            </div>
+          )}
+          {/* --- FIN DEL AÑADIDO --- */}
+
         </div>
       </section>
 
@@ -153,7 +164,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- 3. SECCIÓN "Armá tu PC" REEMPLAZADA --- */}
+      {/* --- Sección Youtube (Tu código sin cambios) --- */}
       <section className="youtube-section">
         <div className="container">
           <div className="section-header">
@@ -163,7 +174,6 @@ const Home = () => {
           <YoutubeGrid />
         </div>
       </section>
-      {/* --- FIN DEL REEMPLAZO --- */}
     </div>
   );
 };
