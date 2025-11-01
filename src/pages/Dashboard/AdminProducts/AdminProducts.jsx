@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   getAllProductsForAdmin, 
   createProduct, 
   updateProduct, 
   deleteProduct,
-  generateProductSpecs, // <-- IMPORTAR NUEVO SERVICIO
+  generateProductSpecs,
 } from '../../../services/productService';
 import { getAllCategories } from '../../../services/categoryService';
-// --- IMPORTAR NUEVO ÍCONO (FiCpu y FiLoader) ---
 import { FiUploadCloud, FiImage, FiCpu, FiLoader } from 'react-icons/fi';
 import { formatCurrency } from '../../../utils/formatCurrency';
 import './AdminProducts.scss';
@@ -116,7 +115,7 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
 
 // --- Componente Principal de la Página ---
 const AdminProducts = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); // <-- Lista Maestra
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -124,9 +123,9 @@ const AdminProducts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null); 
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
-  
-  // --- NUEVO ESTADO DE CARGA ---
-  const [generatingSpecs, setGeneratingSpecs] = useState(null); // Almacena el ID del producto que está generando
+  const [generatingSpecs, setGeneratingSpecs] = useState(null);
+
+  // (Quitamos el estado 'showInactive')
 
   const fetchProducts = async () => {
     try {
@@ -170,7 +169,7 @@ const AdminProducts = () => {
         setCurrentProduct(null);
 
       } else {
-        // --- MODO CREACIÓN (El nuevo flujo) ---
+        // --- MODO CREACIÓN ---
         const newProduct = await createProduct(productData, imageFile);
         setProducts(prevProducts => [...prevProducts, newProduct]);
         setIsFormOpen(false);
@@ -185,10 +184,13 @@ const AdminProducts = () => {
     }
   };
 
+  // --- LÓGICA DE handleDelete REVERTIDA ---
+  // Ahora filtra el producto de la lista en lugar de solo actualizar su estado
   const handleDelete = async (productId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       try {
         await deleteProduct(productId);
+        // Quitamos el producto de la lista maestra en el estado
         setProducts(products.filter(p => p.id !== productId));
       } catch (err) {
         setError('Error al eliminar el producto.');
@@ -197,14 +199,12 @@ const AdminProducts = () => {
     }
   };
   
-  // --- NUEVA FUNCIÓN HANDLER ---
   const handleGenerateSpecs = async (productId) => {
-    setGeneratingSpecs(productId); // Inicia el loader para este producto
+    // ... (sin cambios aquí)
+    setGeneratingSpecs(productId);
     setError('');
     try {
-      // Llama al servicio
       const newSpecs = await generateProductSpecs(productId);
-      // Actualiza el producto en el estado local con las nuevas specs
       setProducts(prevProducts =>
         prevProducts.map(p =>
           p.id === productId ? { ...p, specs: newSpecs } : p
@@ -214,10 +214,11 @@ const AdminProducts = () => {
     } catch (err) {
       setError(err.message || 'Error al generar las especificaciones.');
     } finally {
-      setGeneratingSpecs(null); // Detiene el loader
+      setGeneratingSpecs(null);
     }
   };
 
+  // ... (manejadores de modales sin cambios)
   const openEditModal = (product) => {
     setCurrentProduct(product);
     setIsFormOpen(true);
@@ -236,12 +237,20 @@ const AdminProducts = () => {
     setCurrentProduct(null);
   };
 
+  // --- useMemo ACTUALIZADO ---
+  // Ahora solo filtra los productos activos (isActive: true)
+  const visibleProducts = useMemo(() => {
+    return products.filter(p => p.isActive === true || p.isActive === undefined);
+  }, [products]);
+
+
   if (loading) return <p style={{ textAlign: 'center', padding: '2rem' }}>Cargando panel de administración...</p>;
 
   return (
     <div className="admin-products-container">
       <div className="admin-header">
         <h1>Gestión de Productos</h1>
+        {/* --- ToggleSwitch ELIMINADO --- */}
         <div>
           <button onClick={() => { setCurrentProduct(null); setIsFormOpen(true); }}>
             + Crear Producto
@@ -271,6 +280,7 @@ const AdminProducts = () => {
         <table>
           <thead>
             <tr>
+              {/* --- Columna "Estado" ELIMINADA --- */}
               <th>ID</th>
               <th>Imagen</th>
               <th>Nombre</th>
@@ -280,8 +290,11 @@ const AdminProducts = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map(product => (
+            {/* --- Usamos visibleProducts para el map --- */}
+            {visibleProducts.map(product => (
+              // --- className 'inactive-row' ELIMINADO ---
               <tr key={product.id}>
+                {/* --- Celda "Estado" ELIMINADA --- */}
                 <td>{product.id}</td>
                 <td className="image-cell">
                   <img src={product.coverimageurl} alt={product.name} className="product-table-image" />
@@ -295,17 +308,16 @@ const AdminProducts = () => {
                     <FiImage title="Gestionar Galería" />
                   </button>
                   
-                  {/* --- NUEVO BOTÓN CON LÓGICA DE CARGA --- */}
                   <button 
                     className="spec-btn" 
                     onClick={() => handleGenerateSpecs(product.id)}
                     disabled={generatingSpecs === product.id}
                     title="Generar Especificaciones con IA"
                   >
-                    {/* Muestra un loader si se está generando, o el ícono si no */}
                     {generatingSpecs === product.id ? <FiLoader className="loader-icon" /> : <FiCpu />}
                   </button>
 
+                  {/* Botón de eliminar ahora siempre está habilitado */}
                   <button onClick={() => handleDelete(product.id)}>Eliminar</button>
                 </td>
               </tr>

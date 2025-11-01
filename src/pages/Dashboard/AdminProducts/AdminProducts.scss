@@ -16,7 +16,13 @@
   gap: 1rem;
 
   h1 { font-size: 2rem; }
-  div { display: flex; gap: 1rem; align-items: center; }
+  // Estilo simple original para el div
+  div { 
+    display: flex; 
+    gap: 1rem; 
+    align-items: center; 
+  }
+  
   button {
     background-color: $primary-color;
     color: $light-text;
@@ -81,7 +87,7 @@ table {
     transition: all 0.2s ease;
     
     // Estilo para el botón de editar
-    &:hover { 
+    &:hover:not(:disabled) { 
       border-color: $primary-color; 
       color: $primary-color;
       background-color: color.adjust($primary-color, $alpha: -0.9);
@@ -92,14 +98,13 @@ table {
       padding: 0.3rem 0.5rem; 
       svg { font-size: 1rem; vertical-align: middle; }
       
-      &:hover {
+      &:hover:not(:disabled) {
         border-color: #eab308; // Amarillo
         color: #eab308;
         background-color: color.adjust(#eab308, $alpha: -0.9);
       }
     }
 
-    // --- INICIO DE NUEVO ESTILO ---
     // Estilo para el botón de Generar Specs
     &.spec-btn {
       padding: 0.3rem 0.5rem;
@@ -110,16 +115,16 @@ table {
         color: #4ade80;
         background-color: color.adjust(#4ade80, $alpha: -0.9);
       }
-
-      &:disabled {
-        color: $secondary-text;
-        border-color: $secondary-text;
-        background-color: transparent;
-        cursor: wait;
-        opacity: 0.5;
-      }
     }
-    // --- FIN DE NUEVO ESTILO ---
+
+    // Estilo para botones deshabilitados
+    &:disabled {
+      color: $secondary-text;
+      border-color: $secondary-text;
+      background-color: transparent;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
   }
 }
 
