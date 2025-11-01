@@ -30,28 +30,27 @@
     }
   }
 
-  // --- CONTENEDOR DE LA IMAGEN (CAMBIOS CLAVE) ---
+  // --- ESTE BLOQUE SE HA ELIMINADO ---
+  /*
   &__image-container {
     background-color: $dark-card-bg;
     border-radius: 8px;
     padding: 1rem;
     width: 100%;
-    position: sticky; // Para que la imagen se quede fija al hacer scroll en desktop
-    top: 80px; // Espacio desde el navbar
+    position: sticky; 
+    top: 80px; 
 
     img {
-      display: block; // Elimina espacio extra debajo de la imagen
+      display: block; 
       width: 100%;
-      height: auto; // La altura se define por el aspect-ratio
-      
-      // La magia está aquí:
-      aspect-ratio: 16/9; // Fuerza una proporción cuadrada (puedes cambiar a 4 / 3 si prefieres)
-      object-fit: cover;   // Recorta la imagen para que llene el contenedor sin deformarse
-      
+      height: auto; 
+      aspect-ratio: 16/9; 
+      object-fit: cover;   
       border-radius: 4px;
-      background-color: $dark-bg; // Fondo mientras carga
+      background-color: $dark-bg; 
     }
   }
+  */
 
   &__info {
     display: flex;

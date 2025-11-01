@@ -4,8 +4,11 @@ import { getProductById } from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
 import { useCart } from '../../context/CartContext';
 import { FiShoppingCart } from 'react-icons/fi';
-import { formatCurrency } from '../../utils/formatCurrency'; // <-- IMPORTAR
+import { formatCurrency } from '../../utils/formatCurrency';
 import './ProductDetail.scss';
+
+// --- 1. IMPORTAR EL NUEVO COMPONENTE ---
+import ProductGallery from '../../components/common/ProductGallery/ProductGallery';
 
 const ProductDetail = () => {
   const { addToCart } = useCart();
@@ -26,7 +29,7 @@ const ProductDetail = () => {
           getAllCategories()
         ]);
 
-        setProduct(productData);
+        setProduct(productData); // productData ahora incluye product.gallery
 
         const foundCategory = categoriesData.find(cat => cat.id === productData.categoryid);
         setCategory(foundCategory);
@@ -58,9 +61,14 @@ const ProductDetail = () => {
     <div className="product-detail">
       <div className="product-detail__container">
         <div className="product-detail__grid">
-          <div className="product-detail__image-container">
-            <img src={product.coverimageurl} alt={product.name} />
-          </div>
+          
+          {/* --- 2. REEMPLAZAR EL DIV DE IMAGEN POR EL COMPONENTE --- */}
+          <ProductGallery 
+            coverImage={product.coverimageurl}
+            galleryImages={product.gallery} // Pasamos el nuevo array
+          />
+          {/* --- FIN DEL REEMPLAZO --- */}
+
           <div className="product-detail__info">
             {category && (
               <Link to="/products" className="product-detail__breadcrumb">
@@ -68,7 +76,6 @@ const ProductDetail = () => {
               </Link>
             )}
             <h1 className="product-detail__name">{product.name}</h1>
-            {/* --- MODIFICACIÓN AQUÍ --- */}
             <p className="product-detail__price">{formatCurrency(product.price)}</p>
             <p className="product-detail__description">{product.description}</p>
 

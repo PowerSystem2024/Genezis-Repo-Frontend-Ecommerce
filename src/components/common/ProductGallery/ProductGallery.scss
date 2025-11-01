@@ -1,0 +1,60 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+.product-gallery-container {
+  width: 100%;
+  position: sticky;
+  top: 90px; // Coincide con el top de ProductDetail.scss
+}
+
+.gallery-main-image {
+  background-color: $dark-card-bg;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  padding: 1rem; // Mantenemos el padding que tenías
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9; // Mantenemos el aspect ratio
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: $dark-bg;
+  }
+}
+
+.gallery-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 0.75rem;
+}
+
+.thumbnail-btn {
+  background-color: $dark-card-bg;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  aspect-ratio: 1 / 1; // Miniaturas cuadradas
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.7;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.active {
+    border-color: $primary-color;
+    opacity: 1;
+  }
+}
