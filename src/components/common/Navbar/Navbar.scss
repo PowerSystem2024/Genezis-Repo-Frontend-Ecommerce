@@ -23,13 +23,6 @@
     gap: 0.75rem;
   }
 
-  &__hamburger {
-    background: none; border: none;
-    color: $light-text; font-size: 1.5rem;
-    cursor: pointer; display: flex; align-items: center;
-    @media (min-width: $breakpoint-lg) { display: none; }
-  }
-
   &__logo {
     color: $light-text; font-size: 1.2rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 1px;

@@ -1,43 +1,42 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiUser, FiShoppingCart, FiMenu, FiLogOut } from 'react-icons/fi';
+// 1. IMPORTAMOS EL NUEVO ICONO FiGrid
+import { FiUser, FiShoppingCart, FiMenu, FiLogOut, FiGrid } from 'react-icons/fi';
 import { useCart } from '../../../context/CartContext';
 import { useAuth } from '../../../context/AuthContext';
-import MobileMenu from '../MobileMenu/MobileMenu';
 import './Navbar.scss';
 
 const Navbar = () => {
   const { items } = useCart();
   const { isAuthenticated, user, logout } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <>
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-      
       <header className="navbar">
         <div className="navbar__container">
           <div className="navbar__left">
-            <button className="navbar__hamburger" onClick={() => setIsMobileMenuOpen(true)}><FiMenu /></button>
             <Link to="/" className="navbar__logo">GAMERSTORE</Link>
           </div>
           
           <nav className="navbar__nav-desktop">
-            <Link to="/products" className="navbar__link">Productos</Link>
-            <Link to="/build-pc" className="navbar__link">Contacto</Link>
-
+            {/* 2. ENLACES DE TEXTO ELIMINADOS DE AQUÍ */}
+            
             {isAuthenticated && user?.role === 'admin' && (
               <Link to="/admin/products" className="navbar__link">Admin</Link>
-              
             )}
           </nav>
           
           <div className="navbar__actions">
+
+            {/* 3. NUEVO ICONO DE CATÁLOGO AÑADIDO AQUÍ */}
+            <Link to="/products" className="navbar__action-link" title="Ver Productos">
+              <FiGrid className="navbar__icon" />
+            </Link>
+            
             {isAuthenticated ? (
               <div className="navbar__user-menu">
-                {/* --- ASEGÚRATE DE QUE ESTA LÍNEA USE 'firstName' --- */}
                 <span className="navbar__username">Hola, {user?.firstName}</span>
                 <button onClick={logout} className="navbar__logout-btn">
                   <FiLogOut title="Cerrar Sesión" />
