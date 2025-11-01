@@ -6,21 +6,21 @@ import {
   deleteProduct,
 } from '../../../services/productService';
 import { getAllCategories } from '../../../services/categoryService';
-import { FiUploadCloud } from 'react-icons/fi';
-import { formatCurrency } from '../../../utils/formatCurrency'; // <-- IMPORTAR
+import { FiUploadCloud, FiImage } from 'react-icons/fi'; // <-- Añadir FiImage
+import { formatCurrency } from '../../../utils/formatCurrency';
 import './AdminProducts.scss';
 
+// --- 1. IMPORTAR EL NUEVO MODAL DE GALERÍA ---
+import GalleryManagerModal from './GalleryManagerModal';
+
 // --- Subcomponente del Formulario (Modal) ---
-// (El formulario maneja números crudos, no necesita formateo aquí)
+// (El formulario de Producto NO CAMBIA)
 const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
-  // ... (código existente del formulario sin cambios en el formateo) ...
     const [product, setProduct] = useState(() => {
     const initialState = { name: '', description: '', price: '', stock: '', categoryID: '' };
     if (!currentProduct) return initialState;
     return {
       ...currentProduct,
-      // Aseguramos que el precio se maneje como string en el input,
-      // pero podríamos necesitar convertirlo a número al guardar si la API lo requiere.
       price: String(currentProduct.price || ''),
       stock: String(currentProduct.stock || ''),
       categoryID: currentProduct.categoryid || '',
@@ -45,12 +45,11 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aseguramos enviar los valores numéricos correctamente si la API los espera así
     const productToSend = {
         ...product,
         price: parseFloat(product.price) || 0,
         stock: parseInt(product.stock, 10) || 0,
-        categoryID: parseInt(product.categoryID, 10) || null // o el valor que corresponda
+        categoryID: parseInt(product.categoryID, 10) || null
     };
     onSave(productToSend, imageFile);
   };
@@ -88,7 +87,6 @@ const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
           <div className="form-row">
             <div className="form-group">
               <label>Precio</label>
-              {/* Mantenemos type="number" para validación del navegador, step para decimales */}
               <input type="number" name="price" value={product.price} onChange={handleChange} required step="0.01" min="0" />
             </div>
             <div className="form-group">
@@ -123,16 +121,23 @@ const AdminProducts = () => {
   const [error, setError] = useState('');
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState(null);
+  const [currentProduct, setCurrentProduct] = useState(null); // Producto para editar O para la galería
+  
+  // --- 2. NUEVO ESTADO PARA EL MODAL DE GALERÍA ---
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
 
   const fetchProducts = async () => {
     try {
-      const productsData = await getAllProducts();
+      setLoading(true); // Asegurarse de poner loading al recargar
+      setError('');
+      const productsData = await getAllProducts(); // getAllProducts ahora trae /admin/all
       const productsArray = Array.isArray(productsData) ? productsData : productsData?.products || [];
       setProducts(productsArray);
     } catch (err) {
       setError('No se pudieron cargar los productos.');
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -154,20 +159,17 @@ const AdminProducts = () => {
 
   const handleSave = async (productData, imageFile) => {
     setError('');
-
     try {
       if (currentProduct && currentProduct.id) {
         const updatedProduct = await updateProduct(currentProduct.id, productData, imageFile);
-        setProducts(products.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
-
+        // Actualizamos el producto en el estado local
+        setProducts(products.map(p => (p.id === updatedProduct.id ? {...p, ...updatedProduct} : p)));
       } else {
         const newProduct = await createProduct(productData, imageFile);
         setProducts(prevProducts => [...prevProducts, newProduct]);
       }
-
       setIsFormOpen(false);
       setCurrentProduct(null);
-
     } catch (err) {
       console.error("Error al guardar:", err);
       setError(err.message || 'Error al guardar el producto.');
@@ -185,6 +187,28 @@ const AdminProducts = () => {
       }
     }
   };
+  
+  // --- 3. FUNCIONES PARA ABRIR Y CERRAR MODALES ---
+  const openEditModal = (product) => {
+    setCurrentProduct(product);
+    setIsFormOpen(true);
+    setIsGalleryModalOpen(false);
+  };
+
+  const openGalleryModal = (product) => {
+    setCurrentProduct(product);
+    setIsGalleryModalOpen(true);
+    setIsFormOpen(false);
+  };
+  
+  const closeModal = () => {
+    setIsFormOpen(false);
+    setIsGalleryModalOpen(false);
+    setCurrentProduct(null);
+    // Opcional: Recargar productos por si la galería cambió
+    // fetchProducts(); 
+    // Por ahora no lo hacemos para evitar recarga, el modal de galería es atómico.
+  };
 
   if (loading) return <p style={{ textAlign: 'center', padding: '2rem' }}>Cargando panel de administración...</p>;
 
@@ -201,12 +225,20 @@ const AdminProducts = () => {
 
       {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
 
+      {/* --- 4. RENDER CONDICIONAL DE AMBOS MODALES --- */}
       {isFormOpen && (
         <ProductForm
           currentProduct={currentProduct}
           onSave={handleSave}
-          onCancel={() => { setIsFormOpen(false); setCurrentProduct(null); }}
+          onCancel={closeModal}
           categories={categories}
+        />
+      )}
+      
+      {isGalleryModalOpen && currentProduct && (
+        <GalleryManagerModal
+          productId={currentProduct.id}
+          onClose={closeModal}
         />
       )}
 
@@ -230,11 +262,14 @@ const AdminProducts = () => {
                   <img src={product.coverimageurl} alt={product.name} className="product-table-image" />
                 </td>
                 <td>{product.name}</td>
-                {/* --- MODIFICACIÓN AQUÍ --- */}
                 <td>{formatCurrency(product.price)}</td>
                 <td>{product.stock}</td>
                 <td className="actions-cell">
-                  <button onClick={() => { setCurrentProduct(product); setIsFormOpen(true); }}>Editar</button>
+                  <button onClick={() => openEditModal(product)}>Editar</button>
+                  {/* --- 5. NUEVO BOTÓN DE GALERÍA --- */}
+                  <button className="gallery-btn" onClick={() => openGalleryModal(product)}>
+                    <FiImage title="Gestionar Galería" />
+                  </button>
                   <button onClick={() => handleDelete(product.id)}>Eliminar</button>
                 </td>
               </tr>

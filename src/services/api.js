@@ -50,10 +50,15 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
 
 /**
+ * --- VERSIÓN MODIFICADA ---
  * Una función wrapper para 'fetch' que maneja la subida de archivos (FormData).
- * (El resto de la función no cambia, pero ahora usará la BASE_URL correcta)
+ * Ahora acepta un parámetro 'method' para ser reutilizable.
+ * @param {string} endpoint El endpoint de la API.
+ * @param {FormData} formData El objeto FormData que se enviará.
+ * @param {string} method El método HTTP (ej. 'POST', 'PUT'). Por defecto 'POST'.
+ * @returns {Promise<any>} La respuesta de la API en formato JSON.
  */
-export const fetchWithAuthFormData = async (endpoint, formData) => {
+export const fetchWithAuthFormData = async (endpoint, formData, method = 'POST') => {
   const token = localStorage.getItem('token');
   
   const headers = {}; 
@@ -62,9 +67,8 @@ export const fetchWithAuthFormData = async (endpoint, formData) => {
   }
 
   try {
-    // 3. Usa la variable BASE_URL
     const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: 'PUT', // Generalmente PUT o POST para subidas
+      method: method, // <-- CAMBIO AQUÍ
       headers: headers,
       body: formData, 
     });

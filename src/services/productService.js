@@ -1,5 +1,6 @@
 // src/services/productService.js
-import { fetchWithAuth, BASE_URL } from './api'; // <-- IMPORTAMOS LA URL CENTRAL Y fetchWithAuth
+import { fetchWithAuth, BASE_URL,fetchWithAuthFormData } from './api'; // <-- IMPORTAMOS LA URL CENTRAL Y fetchWithAuth
+
 
 // --- Funciones Públicas ---
 
@@ -110,3 +111,34 @@ export const deleteProduct = async (id) => {
     method: 'DELETE',
   });
 };
+
+// --- INICIO DE NUEVAS FUNCIONES ---
+
+/**
+ * Sube una nueva imagen a la galería de un producto.
+ * @param {string|number} productId El ID del producto.
+ * @param {File} imageFile El archivo de imagen a subir.
+ * @param {string} altText El texto alternativo (opcional).
+ * @returns {Promise<object>} El objeto de la imagen recién creada.
+ */
+export const uploadToGallery = async (productId, imageFile, altText = '') => {
+  const formData = new FormData();
+  formData.append('galleryImage', imageFile);
+  formData.append('altText', altText);
+
+  // Llama a la API usando POST
+  const data = await fetchWithAuthFormData(`/products/${productId}/gallery`, formData, 'POST');
+  return data.image; // La API devuelve { message, image }
+};
+
+/**
+ * Elimina una imagen de la galería de un producto.
+ * @param {string|number} imageId El ID de la imagen (de la tabla productimages).
+ * @returns {Promise<object>} Un mensaje de éxito.
+ */
+export const deleteFromGallery = async (imageId) => {
+  return await fetchWithAuth(`/products/gallery/${imageId}`, {
+    method: 'DELETE',
+  });
+};
+// --- FIN DE NUEVAS FUNCIONES ---

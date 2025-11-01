@@ -57,16 +57,15 @@ table {
   tbody tr:hover { background-color: color.adjust($dark-card-bg, $lightness: 3%); }
 }
 
-// --- ESTILOS DE IMAGEN EN LA TABLA ---
 .image-cell {
-  width: 150px; // Dar un ancho fijo a la celda de la imagen
+  width: 150px;
 }
 .product-table-image {
   width: 120px;
   height: 120px;
-  object-fit: cover; // La magia está aquí: recorta la imagen para que encaje
+  object-fit: cover;
   border-radius: 8px;
-  background-color: $dark-bg; // Fondo mientras carga la imagen
+  background-color: $dark-bg;
 }
 
 .actions-cell {
@@ -80,25 +79,39 @@ table {
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
+    
+    // Estilo para el botón de editar
     &:hover { 
       border-color: $primary-color; 
       color: $primary-color;
       background-color: color.adjust($primary-color, $alpha: -0.9);
     }
+    
+    // --- NUEVOS ESTILOS PARA EL BOTÓN DE GALERÍA ---
+    &.gallery-btn {
+      padding: 0.3rem 0.5rem; // Más cuadrado
+      svg { font-size: 1rem; vertical-align: middle; }
+      
+      &:hover {
+        border-color: #eab308; // Amarillo
+        color: #eab308;
+        background-color: color.adjust(#eab308, $alpha: -0.9);
+      }
+    }
   }
 }
 
-// --- ESTILOS DEL MODAL Y FORMULARIO ---
+// --- ESTILOS DEL MODAL Y FORMULARIO (Sin cambios) ---
 .modal-overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(0,0,0,0.7);
   display: flex;
   justify-content: center;
-  align-items: flex-start; // Alinear arriba para ver mejor en móvil
+  align-items: flex-start;
   z-index: 1000;
   padding: 2rem 1rem;
-  overflow-y: auto; // Permitir scroll en el overlay
+  overflow-y: auto;
 }
 .modal-content {
   background-color: $dark-card-bg;
@@ -133,7 +146,7 @@ table {
     justify-content: center;
     padding: 3rem 1rem;
     color: $secondary-text;
-    height: 250px; // Altura fija para el área de subida
+    height: 250px;
 
     svg {
       font-size: 2.5rem;
@@ -143,10 +156,10 @@ table {
   
   .image-preview {
     width: 100%;
-    aspect-ratio: 16 / 9; // Proporción 16:9 para la imagen
-    object-fit: cover; // Recorta la imagen para que llene el contenedor
-    border-radius: 6px; // Un radio ligeramente menor que el del contenedor
-    display: block; // Importante para evitar espacios extra
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
   }
 }
 
@@ -172,12 +185,11 @@ form .form-actions {
   justify-content: flex-end;
   gap: 1rem;
   button {
-    padding: 0.75rem 1.5rem; // <-- igual para ambos botones
+    padding: 0.75rem 1.5rem;
     border-radius: 4px;
     font-weight: 600;
     cursor: pointer;
     border: none;
-    // Estilos para ambos botones, diferenciando solo por tipo
     &[type="submit"] { 
       background-color: $primary-color; 
       color: $light-text;
