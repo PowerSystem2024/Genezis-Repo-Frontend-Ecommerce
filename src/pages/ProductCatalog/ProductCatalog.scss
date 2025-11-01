@@ -59,6 +59,11 @@
       background-color: color.adjust($dark-card-bg, $lightness: 5%);
     }
   }
+
+  // Mantenemos la regla anterior para ocultar "Filtros"
+  .btn-filters-mobile {
+    display: none;
+  }
 }
 
 .product-list-header {
@@ -124,11 +129,18 @@
     }
   }
 
+  // --- INICIO DE LA MODIFICACIÓN ---
   .view-toggle {
-    display: flex;
+    // 1. Ocultar el bloque entero por defecto (móvil)
+    display: none; 
     background-color: $dark-card-bg;
     border-radius: 8px;
     border: 1px solid color.adjust($dark-bg, $lightness: 15%);
+
+    // 2. Mostrarlo solo en 'lg' (992px) y superior
+    @media (min-width: $breakpoint-lg) {
+      display: flex;
+    }
 
     button {
       background: none;
@@ -138,7 +150,10 @@
       cursor: pointer;
       &.active, &:hover { color: $light-text; }
     }
+
+    // 3. Ya no necesitamos la regla anidada .btn-view-list
   }
+  // --- FIN DE LA MODIFICACIÓN ---
 }
 
 .error-message {

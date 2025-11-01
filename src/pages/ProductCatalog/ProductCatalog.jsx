@@ -26,7 +26,7 @@ const ProductCatalog = () => {
   }, []);
   
   useEffect(() => {
-    // Ya no es necesario, el estado se maneja localmente, pero lo dejamos por si se comparte un enlace con ?search=
+    // ... (sin cambios aquí)
     const params = new URLSearchParams(location.search);
     const searchFromURL = params.get('search');
     if (searchFromURL) {
@@ -50,6 +50,7 @@ const ProductCatalog = () => {
   const handleCategorySelect = (categoryId) => { setActiveCategory(categoryId); setIsFilterSidebarOpen(false); };
   
   const renderProductList = () => {
+    // ... (sin cambios aquí)
     if (productsLoading || loadingCategories) return <p>Cargando...</p>;
     if (productsError) return <p className="error-message">{productsError}</p>;
     return (
@@ -81,12 +82,12 @@ const ProductCatalog = () => {
         <main className="product-list-container">
           <div className="mobile-filter-buttons">
             <button onClick={() => setIsFilterSidebarOpen(true)}><FiMenu /> Categorías</button>
-            <button><FiFilter /> Filtros</button>
+            {/* --- 1. AÑADIMOS CLASE AL BOTÓN DE FILTROS --- */}
+            <button className="btn-filters-mobile"><FiFilter /> Filtros</button>
           </div>
           
           <div className="product-list-header">
             <h1>{categories.find(c => c.id === activeCategory)?.name || 'Todos los productos'}</h1>
-            {/* --- BARRA DE BÚSQUEDA AÑADIDA AQUÍ --- */}
             <div className="search-control">
               <FiSearch />
               <input 
@@ -105,7 +106,8 @@ const ProductCatalog = () => {
               </select>
               <div className="view-toggle">
                 <button className={viewMode === 'grid' ? 'active' : ''} onClick={() => setViewMode('grid')}><FiGrid /></button>
-                <button className={viewMode === 'list' ? 'active' : ''} onClick={() => setViewMode('list')}><FiList /></button>
+                {/* --- 2. AÑADIMOS CLASE AL BOTÓN DE LISTA --- */}
+                <button className={`btn-view-list ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')}><FiList /></button>
               </div>
             </div>
           </div>

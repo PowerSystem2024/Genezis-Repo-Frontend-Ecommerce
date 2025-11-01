@@ -66,10 +66,8 @@
     flex-shrink: 0;
   }
 
-  &__user-icon {
-      display: none;
-      @media (min-width: $breakpoint-sm) { display: flex; }
-  }
+  // --- BLOQUE ELIMINADO ---
+  // Ya no ocultamos el ícono de usuario en móvil
 
   &__cart-link { position: relative; }
 
@@ -81,7 +79,6 @@
     display: flex; align-items: center; justify-content: center;
   }
 
-  // --- CORRECCIÓN: ESTILOS MOVIDOS AQUÍ DENTRO ---
   &__user-menu {
     display: flex;
     align-items: center;
@@ -111,4 +108,4 @@
     }
   }
   
-} 
+}

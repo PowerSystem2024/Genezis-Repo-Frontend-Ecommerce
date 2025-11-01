@@ -3,8 +3,22 @@
 
 .product-gallery-container {
   width: 100%;
-  position: sticky;
-  top: 90px; // Coincide con el top de ProductDetail.scss
+  
+  // --- INICIO DE LA MODIFICACIÓN ---
+  
+  // 1. Quitamos 'position: sticky' y 'top' de la regla base.
+  //    Ahora, por defecto (móvil), el componente es estático.
+  position: relative; // Usamos relative como base
+
+  // 2. Añadimos la media query
+  //    $breakpoint-md es 768px (según _variables.scss)
+  @media (min-width: $breakpoint-md) {
+    // 3. Movemos el 'position: sticky' AQUÍ DENTRO.
+    //    Esto solo se aplicará en pantallas de 768px o más.
+    position: sticky;
+    top: 90px;
+  }
+  // --- FIN DE LA MODIFICACIÓN ---
 }
 
 .gallery-main-image {
