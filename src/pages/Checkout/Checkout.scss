@@ -3,23 +3,67 @@
 
 .checkout-container {
   max-width: 600px;
-  margin: 4rem auto;
-  padding: 2rem;
-  background-color: $dark-card-bg;
-  border-radius: 8px;
+  
+  // --- ESTILOS MOBILE-FIRST (MODIFICADOS) ---
+  margin: 0 auto;  // Sin margen vertical, solo centrado horizontal
+  padding: 1.5rem;   // Mantenemos el padding interno
+  
+  // 1. En móvil, el fondo es el del 'main-content', no del 'container'
+  background-color: transparent; 
+  border-radius: 0; // Sin radius en móvil (ocupa todo el ancho)
+
+  // --- 2. AÑADIMOS FLEX PARA LLENAR LA PANTALLA ---
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; // <-- ESTA ES LA CLAVE: hace que el container llene el 'main-content'
+  justify-content: center; // <-- Centra el resumen verticalmente en el espacio
+  
+  // --- 3. OVERRIDE PARA DESKTOP ---
+  @media (min-width: $breakpoint-sm) {
+    // En desktop, restauramos los estilos de "Card"
+    margin: 4rem auto; // Margen original
+    padding: 2rem;   
+    background-color: $dark-card-bg; // Restauramos el fondo de tarjeta
+    border-radius: 8px; // Radius original
+    flex-grow: 0; // <-- En desktop, ya no debe crecer
+    justify-content: flex-start; // <-- Reseteamos la justificación
+  }
 
   &.empty {
     text-align: center;
     h2 { margin-bottom: 1rem; }
     p { color: $secondary-text; }
+    // En desktop, si está vacío, queremos que se comporte como card
+    @media (min-width: $breakpoint-sm) {
+       flex-grow: 0;
+       background-color: $dark-card-bg;
+       border-radius: 8px;
+       padding: 2rem;
+    }
   }
 }
 
 .checkout-summary {
+  // --- 4. AÑADIMOS ESTILOS DE "CARD" SOLO PARA MÓVIL ---
+  width: 100%; 
+  background-color: $dark-card-bg; // El fondo de tarjeta ahora lo tiene el summary en móvil
+  border-radius: 8px; // El radius ahora lo tiene el summary en móvil
+  padding: 1.5rem; // Padding interno para el summary en móvil
+
+  @media (min-width: $breakpoint-sm) {
+    // En desktop, reseteamos estos estilos porque el .checkout-container ya es la tarjeta
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+  }
+  
   h2 {
     text-align: center;
     margin-bottom: 2rem;
-    font-size: 2rem;
+    font-size: 1.8rem;
+    @media (min-width: $breakpoint-sm) {
+      font-size: 2rem;
+    }
   }
 }
 
@@ -41,8 +85,12 @@
   display: flex;
   justify-content: space-between;
   padding: 1.5rem 0;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: $light-text;
+
+  @media (min-width: $breakpoint-sm) {
+    font-size: 1.5rem;
+  }
 }
 
 .pay-button {
@@ -53,10 +101,14 @@
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.2s ease;
+
+  @media (min-width: $breakpoint-sm) {
+    font-size: 1.2rem;
+  }
 
   &:hover:not(:disabled) {
     background-color: color.adjust(#009ee3, $lightness: -10%);

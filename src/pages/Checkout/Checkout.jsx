@@ -44,7 +44,7 @@ const Checkout = () => {
   return (
     <div className="checkout-container">
       <div className="checkout-summary">
-        <h2>Resumen de la Orden</h2>
+        <h2>Resumen de la orden</h2>
         {items.map(item => (
           <div key={item.id} className="summary-item">
             <span className="item-name">{item.name} (x{item.quantity})</span>

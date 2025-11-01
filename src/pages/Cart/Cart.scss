@@ -2,8 +2,13 @@
 
 .cart-page {
   max-width: 1200px;
-  margin: 3rem auto;
-  padding: 0 2rem;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  @media (min-width: $breakpoint-sm) {
+    margin: 3rem auto;
+    padding: 0 2rem;
+  }
 
   &--empty {
     text-align: center;
@@ -25,66 +30,193 @@
 
 .cart-items {
   background-color: $dark-card-bg;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 8px;
   h2 { font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid lighten($dark-bg, 10%); padding-bottom: 1rem; }
+  @media (min-width: $breakpoint-sm) {
+    padding: 2rem;
+  }
 }
 
+// --- INICIO DE CAMBIOS ---
 .cart-page-item {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  gap: 1.5rem;
   align-items: center;
-  padding: 1.5rem 0;
+  padding: 1.25rem 0;
+  
   &:not(:last-child) {
     border-bottom: 1px solid lighten($dark-bg, 10%);
   }
 
+  // --- 1. NUEVO LAYOUT MOBILE-FIRST ---
+  // 3 Columnas: [Imagen] [Info/Precio] [Qty/Eliminar]
+  grid-template-columns: 80px 1fr auto;
+  grid-template-rows: auto auto; // 2 filas
+  gap: 0.25rem 1rem; // Gap vertical pequeño, horizontal más grande
+
   .item-image {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
     border-radius: 4px;
+    // Ocupa ambas filas
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
   }
+
+  .item-info {
+    // Fila 1, Columna 2
+    grid-row: 1 / 2;
+    grid-column: 2 / 3;
+    align-self: end; // Alinear nombre arriba
+  }
+
   .item-name {
     color: $light-text;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0; // Quitamos margen
     display: block;
     &:hover { color: $primary-color; }
   }
-  .item-remove {
-    background: none;
-    border: none;
-    color: $primary-color;
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0;
-    &:hover { text-decoration: underline; }
+
+  // (El .item-remove original ya no existe en .item-info)
+  // Ocultamos el estilo viejo por si acaso
+  .item-remove { display: none; } 
+
+  // --- 2. NUEVO CONTENEDOR PARA QTY ---
+  // Fila 2, Columna 3 (Alineado a la derecha)
+  .item-quantity-control {
+     grid-row: 2 / 3;
+     grid-column: 3 / 4;
+     justify-self: end;
   }
-  .item-quantity input {
-    width: 60px;
-    background-color: $dark-bg;
-    color: $light-text;
-    border: 1px solid lighten($dark-bg, 15%);
-    border-radius: 4px;
-    padding: 0.5rem;
-    text-align: center;
-  }
+  
   .item-price {
+    // Fila 2, Columna 2
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
     font-weight: 600;
     font-size: 1.1rem;
-    text-align: right;
+    text-align: left;
+    align-self: start; // Alinear precio abajo
+  }
+
+  // Botón de eliminar (ícono)
+  .item-remove-btn {
+    // Fila 1, Columna 3 (Esquina superior derecha)
+    grid-row: 1 / 2;
+    grid-column: 3 / 4;
+    justify-self: end;
+    align-self: start;
+
+    background: none;
+    border: none;
+    color: $secondary-text;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.25rem; // Pequeño padding para área de click
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #f87171; // Rojo al hacer hover
+    }
+  }
+
+  // --- 3. OVERRIDE PARA DESKTOP (Tablet mediana y más) ---
+  @media (min-width: $breakpoint-md) {
+    // Restauramos un layout de 1 fila y 5 columnas
+    grid-template-columns: auto 1fr auto auto auto;
+    grid-template-rows: 1fr; // 1 sola fila
+    gap: 1.5rem; // Espaciado original
+    padding: 1.5rem 0;
+
+    .item-image {
+      width: 90px;
+      height: 90px;
+      grid-row: 1 / 2; // Reset
+      grid-column: 1 / 2; // Reset
+    }
+    .item-info {
+      grid-row: 1 / 2; // Reset
+      grid-column: 2 / 3; // Reset
+      align-self: center;
+    }
+    .item-quantity-control {
+      grid-row: 1 / 2; // Reset
+      grid-column: 3 / 4; // Reset
+      justify-self: center; // Centrar el control
+    }
+    .item-price {
+      grid-row: 1 / 2; // Reset
+      grid-column: 4 / 5; // Reset
+      justify-self: end; // Alinear precio a la derecha
+      align-self: center;
+    }
+    .item-remove-btn {
+      grid-row: 1 / 2; // Reset
+      grid-column: 5 / 6; // Reset
+      justify-self: end; // Alinear ícono a la derecha
+      align-self: center;
+      padding: 0.5rem;
+    }
+  }
+}
+// --- FIN DE CAMBIOS DE GRID ---
+
+
+// --- 4. ESTILOS PARA EL NUEVO CONTROLADOR DE CANTIDAD ---
+.item-quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: $dark-bg;
+  border: 1px solid lighten($dark-bg, 15%);
+  border-radius: 6px;
+  overflow: hidden; // Para que los botones se peguen bien
+
+  .quantity-btn {
+    background: none;
+    border: none;
+    color: $light-text;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    
+    &:hover:not(:disabled) {
+      background-color: lighten($dark-bg, 10%);
+    }
+    &:disabled {
+      color: $secondary-text;
+      cursor: not-allowed;
+      background: none;
+    }
+  }
+
+  .quantity-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: $light-text;
+    min-width: 20px; // Ancho mínimo para el número
+    text-align: center;
+    user-select: none; // Evitar que el número se seleccione
   }
 }
 
+// (Estilos del Resumen sin cambios)
 .cart-summary {
   background-color: $dark-card-bg;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 8px;
-  height: fit-content; // Para que no se estire
-  position: sticky; // Para que siga al usuario al hacer scroll
-  top: 2rem;
+  height: fit-content;
+  
+  @media (min-width: $breakpoint-lg) {
+    position: sticky; 
+    top: 2rem;
+    padding: 2rem;
+  }
   
   h2 {
     font-size: 1.5rem;
@@ -98,7 +230,6 @@
     justify-content: space-between;
     margin-bottom: 1rem;
     color: $secondary-text;
-
     span:last-child {
       color: $light-text;
       font-weight: 600;
@@ -106,7 +237,7 @@
   }
   
   .free-shipping {
-    color: #4ade80 !important; // Verde
+    color: #4ade80 !important;
   }
 
   .total-row {

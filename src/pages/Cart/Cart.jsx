@@ -1,17 +1,17 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import { FiTrash2 } from 'react-icons/fi';
+// --- 1. IMPORTAMOS LOS NUEVOS ICONOS ---
+import { FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
 import { formatCurrency } from '../../utils/formatCurrency'; // <-- IMPORTAR
 import './Cart.scss';
 
-// Componente interno para el resumen
+// Componente interno para el resumen (Sin cambios)
 const CartSummary = ({ total }) => (
   <aside className="cart-summary">
     <h2>Resumen de compra</h2>
     <div className="summary-row">
       <span>Productos ({total.itemCount})</span>
-      {/* --- MODIFICACIÓN AQUÍ --- */}
       <span>{formatCurrency(total.price)}</span>
     </div>
     <div className="summary-row">
@@ -20,7 +20,6 @@ const CartSummary = ({ total }) => (
     </div>
     <div className="summary-row total-row">
       <span>Total</span>
-      {/* --- MODIFICACIÓN AQUÍ --- */}
       <span>{formatCurrency(total.price)}</span>
     </div>
     <Link to="/checkout" className="cart__cta-btn">
@@ -33,14 +32,26 @@ const Cart = () => {
   const { items, removeFromCart, updateQuantity } = useCart();
 
   const totals = useMemo(() => {
-    // Calculamos el precio sin formatear para usarlo en cálculos
+    // (Sin cambios aquí)
     const rawPrice = items.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0);
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-    // Devolvemos el precio crudo para el resumen, que lo formateará
     return { price: rawPrice, itemCount };
   }, [items]);
 
+  // --- 2. HANDLERS PARA LOS BOTONES + Y - ---
+  const handleIncrease = (item) => {
+    updateQuantity(item.id, item.quantity + 1);
+  };
+
+  const handleDecrease = (item) => {
+    // Solo resta si la cantidad es mayor a 1
+    if (item.quantity > 1) {
+      updateQuantity(item.id, item.quantity - 1);
+    }
+  };
+
   if (items.length === 0) {
+    // (Sin cambios en la vista de carrito vacío)
     return (
       <div className="cart-page cart-page--empty">
         <h2>Tu carrito está vacío</h2>
@@ -60,24 +71,47 @@ const Cart = () => {
           {items.map(item => (
             <div key={item.id} className="cart-page-item">
               <img src={item.coverimageurl} alt={item.name} className="item-image" />
+              
+              {/* --- 3. INFO AHORA SOLO TIENE EL NOMBRE --- */}
               <div className="item-info">
                 <Link to={`/products/${item.id}`} className="item-name">{item.name}</Link>
-                <button onClick={() => removeFromCart(item.id)} className="item-remove">Eliminar</button>
+                {/* El botón de eliminar se movió */}
               </div>
-              <div className="item-quantity">
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
-                />
+
+              {/* --- 4. NUEVO CONTROLADOR DE CANTIDAD --- */}
+              <div className="item-quantity-control">
+                <button 
+                  className="quantity-btn" 
+                  onClick={() => handleDecrease(item)}
+                  aria-label="Restar uno"
+                  disabled={item.quantity <= 1} // Deshabilitar si es 1
+                >
+                  <FiMinus />
+                </button>
+                <span className="quantity-value">{item.quantity}</span>
+                <button 
+                  className="quantity-btn" 
+                  onClick={() => handleIncrease(item)}
+                  aria-label="Sumar uno"
+                >
+                  <FiPlus />
+                </button>
               </div>
-              {/* --- MODIFICACIÓN AQUÍ --- */}
+
+              {/* --- 5. PRECIO (AHORA 4TA COLUMNA EN DESKTOP) --- */}
               <p className="item-price">{formatCurrency(parseFloat(item.price) * item.quantity)}</p>
+
+              {/* --- 6. BOTÓN DE ELIMINAR (AHORA 5TA COLUMNA EN DESKTOP) --- */}
+              <button 
+                onClick={() => removeFromCart(item.id)} 
+                className="item-remove-btn"
+                aria-label="Eliminar producto"
+              >
+                <FiTrash2 />
+              </button>
             </div>
           ))}
         </main>
-        {/* Pasamos el objeto totals completo */}
         <CartSummary total={totals} />
       </div>
     </div>
