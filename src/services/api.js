@@ -32,6 +32,16 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
     
     if (!response.ok) {
+      // --- INICIO DE MODIFICACIÓN ---
+      // Interceptamos el error 401 (Unauthorized)
+      if (response.status === 401) {
+        // Disparamos un evento global que AuthContext escuchará
+        window.dispatchEvent(new CustomEvent('sessionExpired'));
+        // Lanzamos un error para detener la ejecución del código que llamó a esta función
+        throw new Error('Sesión expirada');
+      }
+      // --- FIN DE MODIFICACIÓN ---
+
       const errorData = await response.json();
       throw new Error(errorData.message || `Error en la petición: ${response.statusText}`);
     }
@@ -43,6 +53,10 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     return {}; 
 
   } catch (error) {
+    // Si el error es el que lanzamos nosotros, no lo logueamos en consola
+    if (error.message === 'Sesión expirada') {
+      throw error;
+    }
     console.error(`Fallo en la petición a ${endpoint}:`, error);
     throw error;
   }
@@ -68,17 +82,30 @@ export const fetchWithAuthFormData = async (endpoint, formData, method = 'POST')
 
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: method, // <-- CAMBIO AQUÍ
+      method: method,
       headers: headers,
       body: formData, 
     });
-    
-    const data = await response.json();
+        
     if (!response.ok) {
+      // --- INICIO DE MODIFICACIÓN ---
+      // Interceptamos el error 401 (Unauthorized)
+      if (response.status === 401) {
+        window.dispatchEvent(new CustomEvent('sessionExpired'));
+        throw new Error('Sesión expirada');
+      }
+      // --- FIN DE MODIFICACIÓN ---
+
+      const data = await response.json();
       throw new Error(data.message || `Error en la subida de archivo a ${endpoint}`);
     }
-    return data;
+    
+    return await response.json();
+
   } catch (error) {
+    if (error.message === 'Sesión expirada') {
+      throw error;
+    }
     console.error(`Fallo en la subida de archivo a ${endpoint}:`, error);
     throw error;
   }

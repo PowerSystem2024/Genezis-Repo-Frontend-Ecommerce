@@ -1,0 +1,71 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+.session-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; // Por encima de todo
+  padding: 1rem;
+}
+
+.session-modal-content {
+  background-color: $dark-card-bg;
+  border-radius: 8px;
+  padding: 2.5rem;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: modal-fade-in 0.2s ease-out;
+}
+
+.session-modal-icon {
+  font-size: 3.5rem;
+  color: $primary-color;
+  margin-bottom: 1.5rem;
+}
+
+.session-modal-title {
+  font-size: 1.8rem;
+  color: $light-text;
+  margin-bottom: 1rem;
+}
+
+.session-modal-text {
+  color: $secondary-text;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.session-modal-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
