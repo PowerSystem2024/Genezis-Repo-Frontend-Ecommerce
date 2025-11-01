@@ -1,0 +1,58 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+.product-specs-container {
+  // Usamos CSS Grid para las columnas (como en tu imagen)
+  display: grid;
+  grid-template-columns: 1fr; // 1 columna en móvil por defecto
+  gap: 2.5rem 2rem;
+  padding-top: 2rem;
+  color: $light-text; // Aseguramos el color de texto
+
+  // En pantallas más grandes (tablets y escritorio), pasamos a 2 columnas
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.spec-group {
+  // Contenedor para un grupo (ej. "CARACTERISTICAS GENERALES")
+}
+
+.spec-group__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $light-text;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid $primary-color; // Línea de color primario
+  text-transform: uppercase;
+}
+
+.spec-group__table {
+  width: 100%;
+  border-collapse: collapse; // Bordes limpios
+}
+
+.spec-item {
+  // Cada fila (ej. "Modelo | Ryzen 5 8600G")
+  td {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid color.adjust($dark-bg, $lightness: 10%); // Línea separadora sutil
+    font-size: 0.95rem;
+    line-height: 1.5; // Espacio si el texto es largo
+  }
+
+  // Clave (ej. "Modelo")
+  &__key {
+    color: $secondary-text;
+    width: 60%; // Le damos más espacio a la clave
+  }
+
+  // Valor (ej. "Ryzen 5 8600G")
+  &__value {
+    color: $light-text;
+    font-weight: 600;
+    text-align: right;
+  }
+}

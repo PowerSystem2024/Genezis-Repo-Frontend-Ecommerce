@@ -30,27 +30,7 @@
     }
   }
 
-  // --- ESTE BLOQUE SE HA ELIMINADO ---
-  /*
-  &__image-container {
-    background-color: $dark-card-bg;
-    border-radius: 8px;
-    padding: 1rem;
-    width: 100%;
-    position: sticky; 
-    top: 80px; 
-
-    img {
-      display: block; 
-      width: 100%;
-      height: auto; 
-      aspect-ratio: 16/9; 
-      object-fit: cover;   
-      border-radius: 4px;
-      background-color: $dark-bg; 
-    }
-  }
-  */
+  // --- (Bloque de __image-container eliminado, ¡correcto!) ---
 
   &__info {
     display: flex;
@@ -128,4 +108,52 @@
       cursor: not-allowed;
     }
   }
+
+  // --- INICIO DE NUEVOS ESTILOS PARA PESTAÑAS (AÑADIDOS) ---
+  &__tabs {
+    margin-top: 4rem; // Espacio entre la info principal y las pestañas
+    border-top: 1px solid color.adjust($dark-bg, $lightness: 10%); // Línea superior
+  }
+} // <-- Cierre de .product-detail
+
+// (Estas reglas están fuera de .product-detail para funcionar)
+.tabs-nav {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid color.adjust($dark-bg, $lightness: 10%);
 }
+
+.tabs-nav__btn {
+  background: none;
+  border: none;
+  color: $secondary-text;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  position: relative;
+  top: 1px; // Truco para que el borde inferior se alinee
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    color: $light-text;
+  }
+
+  &.active {
+    color: $primary-color;
+    border-bottom-color: $primary-color;
+  }
+}
+
+.tabs-content {
+  padding: 1.5rem 0;
+  
+  // Estilo para el párrafo de "aún no implementada"
+  p {
+    color: $secondary-text;
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+}
+// --- FIN DE NUEVOS ESTILOS ---
