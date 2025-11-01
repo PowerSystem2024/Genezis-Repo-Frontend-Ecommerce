@@ -40,7 +40,6 @@ const ProductCard = ({ product, categoryName, viewMode = 'grid' }) => {
       </div>
 
       <div className="product-card__actions">
-        {/* --- MODIFICACIÓN AQUÍ --- */}
         <p className="product-card__price">{formatCurrency(product.price)}</p>
         <button
           className="product-card__cart-btn"

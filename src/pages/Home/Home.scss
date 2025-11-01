@@ -94,14 +94,12 @@
   padding-bottom: 4rem;
   @media (min-width: $breakpoint-sm) {
     padding-top: 6rem;
-    padding-bottom: 6rem;
+    padding-bottom: 1rem;
   }
 }
 .products-grid {
   display: grid;
-  // --- INICIO DE LA MODIFICACIÓN ---
   grid-template-columns: repeat(2, 1fr); // <-- CAMBIADO DE 1fr a 2 columnas
-  // --- FIN DE LA MODIFICACIÓN ---
   gap: 1.5rem;
   
   // Esta regla ahora es redundante, pero no hace daño
@@ -132,11 +130,11 @@
   background-color: $dark-bg; 
   border-top: 1px solid $dark-card-bg;
   border-bottom: 1px solid $dark-card-bg;
-  padding-top: 4rem;
+  padding-top: 0rem;
   padding-bottom: 4rem;
   
   @media (min-width: $breakpoint-sm) {
-    padding-top: 5rem;
+    padding-top: 1rem;
     padding-bottom: 5rem;
   }
 

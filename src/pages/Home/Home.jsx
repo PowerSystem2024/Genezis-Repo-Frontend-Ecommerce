@@ -34,7 +34,7 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(0); // Estado para la página actual de categorías
 
   // Selecciona los primeros 8 productos para destacar
-  const featuredProducts = products.slice(0, 8);
+  const featuredProducts = products.slice(0, 4);
 
   // Función auxiliar para obtener el nombre de la categoría por ID
   const getCategoryNameById = (id) => {
@@ -112,7 +112,7 @@ const Home = () => {
           {/* Wrapper para el título y los botones de navegación */}
           <div className="section-header-wrapper">
             <div className="section-header">
-              <h2>Explorá Nuestras Categorías</h2>
+              <h2>Categorías</h2>
               <p>Encuentra exactamente lo que necesitas</p>
             </div>
             {/* Solo muestra las flechas si hay más de una página */}
@@ -156,7 +156,7 @@ const Home = () => {
       <section className="brands-section">
         <div className="container">
           <div className="section-header">
-            <h2>Marcas que nos acompañan</h2>
+            <h2></h2>
           </div>
           <BrandsCarousel />
         </div>
