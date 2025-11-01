@@ -3,12 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { getProductById } from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
 import { useCart } from '../../context/CartContext';
-import { FiShoppingCart } from 'react-icons/fi';
+// --- 1. IMPORTAR NUEVOS ICONOS ---
+import { FiShoppingCart, FiArrowLeft, FiArrowUp } from 'react-icons/fi';
 import { formatCurrency } from '../../utils/formatCurrency';
 import './ProductDetail.scss';
 import ProductGallery from '../../components/common/ProductGallery/ProductGallery';
-
-// --- 1. IMPORTAR EL NUEVO COMPONENTE DE SPECS ---
 import ProductSpecs from '../../components/common/ProductSpecs/ProductSpecs';
 
 const ProductDetail = () => {
@@ -18,12 +17,11 @@ const ProductDetail = () => {
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // --- 2. AÑADIR ESTADO PARA LAS PESTAÑAS ---
-  const [activeTab, setActiveTab] = useState('preguntas'); // Default tab
-  const [hasSpecs, setHasSpecs] = useState(false); // Estado para saber si mostrar la pestaña
+  const [activeTab, setActiveTab] = useState('preguntas');
+  const [hasSpecs, setHasSpecs] = useState(false);
 
   useEffect(() => {
+    // ... (Lógica de fetch de datos sin cambios) ...
     const fetchProductData = async () => {
       try {
         setLoading(true);
@@ -34,12 +32,10 @@ const ProductDetail = () => {
           getAllCategories()
         ]);
 
-        setProduct(productData); // productData ahora incluye product.gallery
-
+        setProduct(productData);
         const foundCategory = categoriesData.find(cat => cat.id === productData.categoryid);
         setCategory(foundCategory);
 
-        // --- 3. LÓGICA DE PESTAÑAS ---
         if (productData.specs && Object.keys(productData.specs).length > 0) {
           setHasSpecs(true);
           setActiveTab('especificaciones'); 
@@ -47,8 +43,6 @@ const ProductDetail = () => {
           setHasSpecs(false);
           setActiveTab('preguntas'); 
         }
-        // --- FIN LÓGICA DE PESTAÑAS ---
-
       } catch (err) {
         console.error(err);
         setError(err.message || 'Ocurrió un error al cargar el producto.');
@@ -60,8 +54,16 @@ const ProductDetail = () => {
     fetchProductData();
   }, [productId]);
 
-  // --- 4. FUNCIÓN PARA RENDERIZAR EL CONTENIDO DE LA PESTAÑA ---
+  // --- 2. HANDLER PARA EL BOTÓN "VOLVER ARRIBA" ---
+  const handleBackToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', // Scroll suave
+    });
+  };
+
   const renderTabContent = () => {
+    // ... (Sin cambios aquí) ...
     switch (activeTab) {
       case 'especificaciones':
         return <ProductSpecs specs={product.specs} />;
@@ -86,7 +88,13 @@ const ProductDetail = () => {
     <div className="product-detail">
       <div className="product-detail__container">
         
-        {/* --- ESTE ES TU CÓDIGO FUNCIONAL (SIN CAMBIOS) --- */}
+        {/* --- 3. ENLACE "VOLVER AL CATÁLOGO" AÑADIDO --- */}
+        <Link to="/products" className="product-detail__back-link">
+          <FiArrowLeft />
+          Volver al catálogo
+        </Link>
+
+        {/* --- Grid principal (sin cambios) --- */}
         <div className="product-detail__grid">
           <ProductGallery 
             coverImage={product.coverimageurl}
@@ -119,13 +127,10 @@ const ProductDetail = () => {
             </button>
           </div>
         </div>
-        {/* --- FIN DE TU CÓDIGO FUNCIONAL --- */}
-
-
-        {/* --- 5. SECCIÓN INFERIOR (PESTAÑAS) AÑADIDA DEBAJO --- */}
+        
+        {/* --- Sección de Pestañas (sin cambios) --- */}
         <div className="product-detail__tabs">
           <nav className="tabs-nav">
-            
             {hasSpecs && (
               <button
                 className={`tabs-nav__btn ${activeTab === 'especificaciones' ? 'active' : ''}`}
@@ -139,7 +144,12 @@ const ProductDetail = () => {
             {renderTabContent()}
           </div>
         </div>
-        {/* --- FIN DE LA SECCIÓN AÑADIDA --- */}
+
+        {/* --- 4. BOTÓN "VOLVER ARRIBA" AÑADIDO --- */}
+        <button onClick={handleBackToTop} className="product-detail__back-to-top">
+          <FiArrowUp />
+          Volver arriba
+        </button>
 
       </div>
     </div>

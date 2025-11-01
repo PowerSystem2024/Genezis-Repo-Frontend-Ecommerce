@@ -12,7 +12,7 @@
 
 .product-detail {
   &__container {
-    max-width: 1100px; // Aumentamos un poco el ancho para dar más espacio
+    max-width: 1100px;
     margin: 3rem auto;
     padding: 0 2rem;
   }
@@ -21,16 +21,13 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
-    align-items: flex-start; // Alinea los items al principio
+    align-items: flex-start;
     
     @media (min-width: $breakpoint-md) {
-      // Damos más espacio a la imagen en desktop
       grid-template-columns: 3fr 2fr; 
       gap: 3rem;
     }
   }
-
-  // --- (Bloque de __image-container eliminado, ¡correcto!) ---
 
   &__info {
     display: flex;
@@ -109,14 +106,62 @@
     }
   }
 
-  // --- INICIO DE NUEVOS ESTILOS PARA PESTAÑAS (AÑADIDOS) ---
   &__tabs {
-    margin-top: 4rem; // Espacio entre la info principal y las pestañas
-    border-top: 1px solid color.adjust($dark-bg, $lightness: 10%); // Línea superior
+    margin-top: 4rem;
+    border-top: 1px solid color.adjust($dark-bg, $lightness: 10%);
   }
-} // <-- Cierre de .product-detail
 
-// (Estas reglas están fuera de .product-detail para funcionar)
+  // --- INICIO DE NUEVOS ESTILOS ---
+  
+  // Estilo para el enlace "Volver al catálogo"
+  &__back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $secondary-text;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s ease;
+
+    svg {
+      font-size: 1.1rem;
+    }
+
+    &:hover {
+      color: $light-text;
+    }
+  }
+
+  // Estilo para el botón "Volver arriba"
+  &__back-to-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    // Centrado y con margen superior
+    margin: 3rem auto 0;
+    
+    background-color: $dark-card-bg;
+    border: 1px solid color.adjust($dark-bg, $lightness: 15%);
+    color: $secondary-text;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $light-text;
+      background-color: color.adjust($dark-card-bg, $lightness: 5%);
+      border-color: $secondary-text;
+    }
+  }
+  // --- FIN DE NUEVOS ESTILOS ---
+  
+} // Cierre de .product-detail
+
 .tabs-nav {
   display: flex;
   gap: 1rem;
@@ -132,7 +177,7 @@
   padding: 1rem 1.5rem;
   cursor: pointer;
   position: relative;
-  top: 1px; // Truco para que el borde inferior se alinee
+  top: 1px;
   border-bottom: 3px solid transparent;
   transition: color 0.2s ease, border-color 0.2s ease;
 
@@ -149,11 +194,9 @@
 .tabs-content {
   padding: 1.5rem 0;
   
-  // Estilo para el párrafo de "aún no implementada"
   p {
     color: $secondary-text;
     font-size: 1.1rem;
     line-height: 1.6;
   }
 }
-// --- FIN DE NUEVOS ESTILOS ---
