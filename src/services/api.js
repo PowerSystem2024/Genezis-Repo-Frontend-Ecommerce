@@ -1,4 +1,8 @@
-const BASE_URL = 'https://backend-genezis.onrender.com/api';
+// src/services/api.js
+
+// 1. Lee la variable de entorno de Vercel (VITE_API_BASE_URL).
+//    Si no existe (ej. en tu PC local), usa la URL local como fallback.
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 /**
  * Una función wrapper para 'fetch' que incluye automáticamente el token de autenticación para peticiones JSON.
@@ -24,6 +28,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   };
 
   try {
+    // 2. Usa la variable BASE_URL
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
     
     if (!response.ok) {
@@ -31,12 +36,11 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       throw new Error(errorData.message || `Error en la petición: ${response.statusText}`);
     }
 
-    // Algunas respuestas (como DELETE) pueden no tener cuerpo, manejamos ese caso.
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.indexOf("application/json") !== -1) {
         return await response.json();
     }
-    return {}; // Devuelve un objeto vacío si no hay JSON
+    return {}; 
 
   } catch (error) {
     console.error(`Fallo en la petición a ${endpoint}:`, error);
@@ -47,23 +51,22 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
 /**
  * Una función wrapper para 'fetch' que maneja la subida de archivos (FormData).
- * @param {string} endpoint El endpoint de la API al que se va a llamar.
- * @param {FormData} formData El objeto FormData que contiene el archivo.
- * @returns {Promise<any>} La respuesta de la API en formato JSON.
+ * (El resto de la función no cambia, pero ahora usará la BASE_URL correcta)
  */
 export const fetchWithAuthFormData = async (endpoint, formData) => {
   const token = localStorage.getItem('token');
   
-  const headers = {}; // ¡No se establece Content-Type, el navegador lo hace!
+  const headers = {}; 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
   try {
+    // 3. Usa la variable BASE_URL
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'PUT', // Generalmente PUT o POST para subidas
       headers: headers,
-      body: formData, // Se envía el objeto FormData directamente
+      body: formData, 
     });
     
     const data = await response.json();

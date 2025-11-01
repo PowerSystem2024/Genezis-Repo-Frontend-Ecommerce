@@ -1,12 +1,11 @@
-import { fetchWithAuth } from './api';
-
-const BASE_URL = 'https://backend-genezis.onrender.com/api';
+// src/services/productService.js
+import { fetchWithAuth, BASE_URL } from './api'; // <-- IMPORTAMOS LA URL CENTRAL Y fetchWithAuth
 
 // --- Funciones Públicas ---
 
 export const getAllProducts = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/products`);
+    const response = await fetch(`${BASE_URL}/products`); // <-- Usamos la BASE_URL
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data;
@@ -18,7 +17,7 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/products/${id}`);
+    const response = await fetch(`${BASE_URL}/products/${id}`); // <-- Usamos la BASE_URL
     if (!response.ok) {
       if (response.status === 404) throw new Error('Producto no encontrado');
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -53,7 +52,7 @@ export const createProduct = async (productData, imageFile) => {
   }
 
   const token = localStorage.getItem('token');
-  const response = await fetch(`${BASE_URL}/products`, {
+  const response = await fetch(`${BASE_URL}/products`, { // <-- Usamos la BASE_URL
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
     body: formData,
@@ -87,7 +86,7 @@ export const updateProduct = async (id, productData, imageFile) => {
   }
 
   const token = localStorage.getItem('token');
-  const response = await fetch(`${BASE_URL}/products/${id}`, {
+  const response = await fetch(`${BASE_URL}/products/${id}`, { // <-- Usamos la BASE_URL
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${token}` },
     body: formData,
@@ -106,9 +105,8 @@ export const updateProduct = async (id, productData, imageFile) => {
  * @returns {Promise<object>} Un mensaje de éxito.
  */
 export const deleteProduct = async (id) => {
+  // fetchWithAuth ya tiene la BASE_URL, solo pasamos el endpoint
   return await fetchWithAuth(`/products/${id}`, {
     method: 'DELETE',
   });
 };
-
-// La función 'updateProductImage' se ha eliminado porque 'updateProduct' ahora maneja la imagen.

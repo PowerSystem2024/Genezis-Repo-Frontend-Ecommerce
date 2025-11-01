@@ -1,6 +1,5 @@
 // src/services/categoryService.js
-
-const BASE_URL = 'https://backend-genezis.onrender.com/api';
+import { BASE_URL } from './api'; // <-- IMPORTAMOS LA URL CENTRAL
 
 /**
  * Obtiene todas las categorías de la API.
@@ -8,7 +7,7 @@ const BASE_URL = 'https://backend-genezis.onrender.com/api';
  */
 export const getAllCategories = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/categories`);
+    const response = await fetch(`${BASE_URL}/categories`); // <-- Usamos la BASE_URL
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
