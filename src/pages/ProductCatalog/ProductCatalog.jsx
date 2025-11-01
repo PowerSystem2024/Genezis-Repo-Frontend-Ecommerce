@@ -80,14 +80,18 @@ const ProductCatalog = () => {
         </aside>
 
         <main className="product-list-container">
-          <div className="mobile-filter-buttons">
-            <button onClick={() => setIsFilterSidebarOpen(true)}><FiMenu /> Categorías</button>
-            {/* --- 1. AÑADIMOS CLASE AL BOTÓN DE FILTROS --- */}
-            <button className="btn-filters-mobile"><FiFilter /> Filtros</button>
-          </div>
+          {/* --- 1. BLOQUE DE BOTONES MOVIDO DE AQUÍ --- */}
           
           <div className="product-list-header">
             <h1>{categories.find(c => c.id === activeCategory)?.name || 'Todos los productos'}</h1>
+            
+            {/* --- 2. BLOQUE DE BOTONES PEGADO AQUÍ --- */}
+            <div className="mobile-filter-buttons">
+              <button onClick={() => setIsFilterSidebarOpen(true)}><FiMenu /> Categorías</button>
+              <button className="btn-filters-mobile"><FiFilter /> Filtros</button>
+            </div>
+            {/* --- FIN DEL BLOQUE MOVIDO --- */}
+            
             <div className="search-control">
               <FiSearch />
               <input 
@@ -106,7 +110,6 @@ const ProductCatalog = () => {
               </select>
               <div className="view-toggle">
                 <button className={viewMode === 'grid' ? 'active' : ''} onClick={() => setViewMode('grid')}><FiGrid /></button>
-                {/* --- 2. AÑADIMOS CLASE AL BOTÓN DE LISTA --- */}
                 <button className={`btn-view-list ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')}><FiList /></button>
               </div>
             </div>

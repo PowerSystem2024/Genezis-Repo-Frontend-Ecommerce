@@ -35,7 +35,9 @@
 .mobile-filter-buttons {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  flex-grow: 1; 
+  flex-basis: calc(50% - 0.75rem); 
+  order: 1; 
 
   @media (min-width: $breakpoint-lg) {
     display: none;
@@ -60,7 +62,6 @@
     }
   }
 
-  // Mantenemos la regla anterior para ocultar "Filtros"
   .btn-filters-mobile {
     display: none;
   }
@@ -72,7 +73,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  gap: 1.5rem;
+  gap: 1.5rem; 
   
   h1 {
     font-size: 2rem;
@@ -93,15 +94,28 @@
     gap: 0.5rem;
     flex-grow: 1;
     order: 3;
+    width: 100%; 
+    flex-basis: 100%; 
 
     @media (min-width: $breakpoint-lg) {
         order: 2;
         flex-grow: 1;
+        width: auto; 
+        flex-basis: auto; 
         margin: 0 1.5rem;
     }
 
     svg { color: $secondary-text; }
-    input { background: none; border: none; outline: none; color: $light-text; padding: 0.75rem 0; width: 100%; }
+    // --- 1. AJUSTE DE PADDING EN INPUT ---
+    input { 
+      background: none; 
+      border: none; 
+      outline: none; 
+      color: $light-text; 
+      padding: 0.75rem 0.5rem; // <-- Añadido padding horizontal
+      width: 100%; 
+      font-size: 1rem; // Asegurar font-size
+    }
     button { background: none; border: none; color: $secondary-text; cursor: pointer; display: flex; &:hover { color: $light-text; } }
   }
 
@@ -109,11 +123,13 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    width: 100%;
+    flex-grow: 1; 
+    flex-basis: calc(50% - 0.75rem);
     order: 2;
     @media (min-width: $breakpoint-lg) {
         order: 3;
         width: auto;
+        flex-basis: auto; 
     }
   }
 
@@ -122,22 +138,30 @@
     color: $light-text;
     border: 1px solid color.adjust($dark-bg, $lightness: 15%);
     border-radius: 8px;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1rem; 
     flex-grow: 1;
+    font-size: 1rem; 
+    // height: 100%; // <-- 2. ELIMINAR ESTA LÍNEA
+    
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-position: right 1rem center; 
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    
     @media (min-width: $breakpoint-md) {
         flex-grow: 0;
     }
   }
 
-  // --- INICIO DE LA MODIFICACIÓN ---
   .view-toggle {
-    // 1. Ocultar el bloque entero por defecto (móvil)
     display: none; 
     background-color: $dark-card-bg;
     border-radius: 8px;
     border: 1px solid color.adjust($dark-bg, $lightness: 15%);
 
-    // 2. Mostrarlo solo en 'lg' (992px) y superior
     @media (min-width: $breakpoint-lg) {
       display: flex;
     }
@@ -146,14 +170,15 @@
       background: none;
       border: none;
       color: $secondary-text;
-      padding: 0.5rem;
+      // --- 3. AJUSTE DE PADDING EN BOTONES ---
+      padding: 0.75rem; // <-- DE 0.5rem a 0.75rem
+      font-size: 1rem; // <-- Añadido para consistencia
+      display: flex; // <-- Añadido
+      align-items: center; // <-- Añadido
       cursor: pointer;
       &.active, &:hover { color: $light-text; }
     }
-
-    // 3. Ya no necesitamos la regla anidada .btn-view-list
   }
-  // --- FIN DE LA MODIFICACIÓN ---
 }
 
 .error-message {
