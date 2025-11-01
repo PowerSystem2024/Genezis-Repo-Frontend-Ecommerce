@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import {
-  getAllProducts,
+  getAllProductsForAdmin, // <-- Asegúrate de que usa la versión de admin
   createProduct,
   updateProduct,
   deleteProduct,
 } from '../../../services/productService';
 import { getAllCategories } from '../../../services/categoryService';
-import { FiUploadCloud, FiImage } from 'react-icons/fi'; // <-- Añadir FiImage
+import { FiUploadCloud, FiImage } from 'react-icons/fi';
 import { formatCurrency } from '../../../utils/formatCurrency';
 import './AdminProducts.scss';
 
-// --- 1. IMPORTAR EL NUEVO MODAL DE GALERÍA ---
 import GalleryManagerModal from './GalleryManagerModal';
 
 // --- Subcomponente del Formulario (Modal) ---
-// (El formulario de Producto NO CAMBIA)
+// (No hay cambios en este subcomponente)
 const ProductForm = ({ currentProduct, onSave, onCancel, categories }) => {
     const [product, setProduct] = useState(() => {
     const initialState = { name: '', description: '', price: '', stock: '', categoryID: '' };
@@ -121,16 +120,14 @@ const AdminProducts = () => {
   const [error, setError] = useState('');
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState(null); // Producto para editar O para la galería
-  
-  // --- 2. NUEVO ESTADO PARA EL MODAL DE GALERÍA ---
+  const [currentProduct, setCurrentProduct] = useState(null); 
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
 
   const fetchProducts = async () => {
     try {
-      setLoading(true); // Asegurarse de poner loading al recargar
+      setLoading(true);
       setError('');
-      const productsData = await getAllProducts(); // getAllProducts ahora trae /admin/all
+      const productsData = await getAllProductsForAdmin(); 
       const productsArray = Array.isArray(productsData) ? productsData : productsData?.products || [];
       setProducts(productsArray);
     } catch (err) {
@@ -157,24 +154,42 @@ const AdminProducts = () => {
     loadData();
   }, []);
 
+  // --- INICIO DE LA MODIFICACIÓN (Lógica del "Wizard") ---
   const handleSave = async (productData, imageFile) => {
     setError('');
     try {
       if (currentProduct && currentProduct.id) {
+        // --- MODO EDICIÓN ---
+        // 1. Actualizamos el producto
         const updatedProduct = await updateProduct(currentProduct.id, productData, imageFile);
-        // Actualizamos el producto en el estado local
+        // 2. Actualizamos el estado local
         setProducts(products.map(p => (p.id === updatedProduct.id ? {...p, ...updatedProduct} : p)));
+        // 3. Cerramos el modal de edición
+        setIsFormOpen(false);
+        setCurrentProduct(null);
+
       } else {
+        // --- MODO CREACIÓN (El nuevo flujo) ---
+        // 1. Creamos el producto
         const newProduct = await createProduct(productData, imageFile);
+        // 2. Lo añadimos al estado local
         setProducts(prevProducts => [...prevProducts, newProduct]);
+        // 3. Cerramos el modal de CREAR
+        setIsFormOpen(false);
+        // 4. Inmediatamente abrimos el modal de GALERÍA para el producto recién creado
+        setCurrentProduct(newProduct); // Seteamos el producto actual
+        setIsGalleryModalOpen(true); // Abrimos el modal de galería
+        // No reseteamos currentProduct a null aquí
       }
-      setIsFormOpen(false);
-      setCurrentProduct(null);
     } catch (err) {
       console.error("Error al guardar:", err);
       setError(err.message || 'Error al guardar el producto.');
+      // Si falla, cerramos todo para evitar confusiones
+      setIsFormOpen(false);
+      setCurrentProduct(null);
     }
   };
+  // --- FIN DE LA MODIFICACIÓN ---
 
   const handleDelete = async (productId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
@@ -188,7 +203,6 @@ const AdminProducts = () => {
     }
   };
   
-  // --- 3. FUNCIONES PARA ABRIR Y CERRAR MODALES ---
   const openEditModal = (product) => {
     setCurrentProduct(product);
     setIsFormOpen(true);
@@ -205,9 +219,6 @@ const AdminProducts = () => {
     setIsFormOpen(false);
     setIsGalleryModalOpen(false);
     setCurrentProduct(null);
-    // Opcional: Recargar productos por si la galería cambió
-    // fetchProducts(); 
-    // Por ahora no lo hacemos para evitar recarga, el modal de galería es atómico.
   };
 
   if (loading) return <p style={{ textAlign: 'center', padding: '2rem' }}>Cargando panel de administración...</p>;
@@ -225,7 +236,6 @@ const AdminProducts = () => {
 
       {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
 
-      {/* --- 4. RENDER CONDICIONAL DE AMBOS MODALES --- */}
       {isFormOpen && (
         <ProductForm
           currentProduct={currentProduct}
@@ -266,7 +276,6 @@ const AdminProducts = () => {
                 <td>{product.stock}</td>
                 <td className="actions-cell">
                   <button onClick={() => openEditModal(product)}>Editar</button>
-                  {/* --- 5. NUEVO BOTÓN DE GALERÍA --- */}
                   <button className="gallery-btn" onClick={() => openGalleryModal(product)}>
                     <FiImage title="Gestionar Galería" />
                   </button>
