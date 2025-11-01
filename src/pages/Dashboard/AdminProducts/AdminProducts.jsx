@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  getAllProductsForAdmin, // <-- Asegúrate de que usa la versión de admin
-  createProduct,
-  updateProduct,
+  getAllProductsForAdmin, 
+  createProduct, 
+  updateProduct, 
   deleteProduct,
+  generateProductSpecs, // <-- IMPORTAR NUEVO SERVICIO
 } from '../../../services/productService';
 import { getAllCategories } from '../../../services/categoryService';
-import { FiUploadCloud, FiImage } from 'react-icons/fi';
+// --- IMPORTAR NUEVO ÍCONO (FiCpu y FiLoader) ---
+import { FiUploadCloud, FiImage, FiCpu, FiLoader } from 'react-icons/fi';
 import { formatCurrency } from '../../../utils/formatCurrency';
 import './AdminProducts.scss';
 
@@ -122,6 +124,9 @@ const AdminProducts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null); 
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  
+  // --- NUEVO ESTADO DE CARGA ---
+  const [generatingSpecs, setGeneratingSpecs] = useState(null); // Almacena el ID del producto que está generando
 
   const fetchProducts = async () => {
     try {
@@ -154,42 +159,31 @@ const AdminProducts = () => {
     loadData();
   }, []);
 
-  // --- INICIO DE LA MODIFICACIÓN (Lógica del "Wizard") ---
   const handleSave = async (productData, imageFile) => {
     setError('');
     try {
       if (currentProduct && currentProduct.id) {
         // --- MODO EDICIÓN ---
-        // 1. Actualizamos el producto
         const updatedProduct = await updateProduct(currentProduct.id, productData, imageFile);
-        // 2. Actualizamos el estado local
         setProducts(products.map(p => (p.id === updatedProduct.id ? {...p, ...updatedProduct} : p)));
-        // 3. Cerramos el modal de edición
         setIsFormOpen(false);
         setCurrentProduct(null);
 
       } else {
         // --- MODO CREACIÓN (El nuevo flujo) ---
-        // 1. Creamos el producto
         const newProduct = await createProduct(productData, imageFile);
-        // 2. Lo añadimos al estado local
         setProducts(prevProducts => [...prevProducts, newProduct]);
-        // 3. Cerramos el modal de CREAR
         setIsFormOpen(false);
-        // 4. Inmediatamente abrimos el modal de GALERÍA para el producto recién creado
-        setCurrentProduct(newProduct); // Seteamos el producto actual
-        setIsGalleryModalOpen(true); // Abrimos el modal de galería
-        // No reseteamos currentProduct a null aquí
+        setCurrentProduct(newProduct); 
+        setIsGalleryModalOpen(true); 
       }
     } catch (err) {
       console.error("Error al guardar:", err);
       setError(err.message || 'Error al guardar el producto.');
-      // Si falla, cerramos todo para evitar confusiones
       setIsFormOpen(false);
       setCurrentProduct(null);
     }
   };
-  // --- FIN DE LA MODIFICACIÓN ---
 
   const handleDelete = async (productId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
@@ -203,6 +197,27 @@ const AdminProducts = () => {
     }
   };
   
+  // --- NUEVA FUNCIÓN HANDLER ---
+  const handleGenerateSpecs = async (productId) => {
+    setGeneratingSpecs(productId); // Inicia el loader para este producto
+    setError('');
+    try {
+      // Llama al servicio
+      const newSpecs = await generateProductSpecs(productId);
+      // Actualiza el producto en el estado local con las nuevas specs
+      setProducts(prevProducts =>
+        prevProducts.map(p =>
+          p.id === productId ? { ...p, specs: newSpecs } : p
+        )
+      );
+      alert('¡Especificaciones generadas y guardadas con éxito!');
+    } catch (err) {
+      setError(err.message || 'Error al generar las especificaciones.');
+    } finally {
+      setGeneratingSpecs(null); // Detiene el loader
+    }
+  };
+
   const openEditModal = (product) => {
     setCurrentProduct(product);
     setIsFormOpen(true);
@@ -279,6 +294,18 @@ const AdminProducts = () => {
                   <button className="gallery-btn" onClick={() => openGalleryModal(product)}>
                     <FiImage title="Gestionar Galería" />
                   </button>
+                  
+                  {/* --- NUEVO BOTÓN CON LÓGICA DE CARGA --- */}
+                  <button 
+                    className="spec-btn" 
+                    onClick={() => handleGenerateSpecs(product.id)}
+                    disabled={generatingSpecs === product.id}
+                    title="Generar Especificaciones con IA"
+                  >
+                    {/* Muestra un loader si se está generando, o el ícono si no */}
+                    {generatingSpecs === product.id ? <FiLoader className="loader-icon" /> : <FiCpu />}
+                  </button>
+
                   <button onClick={() => handleDelete(product.id)}>Eliminar</button>
                 </td>
               </tr>

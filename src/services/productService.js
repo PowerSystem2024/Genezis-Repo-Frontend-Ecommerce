@@ -1,5 +1,5 @@
 // src/services/productService.js
-import { fetchWithAuth, BASE_URL, fetchWithAuthFormData } from './api'; // <-- Tu importación (está correcta)
+import { fetchWithAuth, BASE_URL, fetchWithAuthFormData } from './api'; 
 
 
 // --- Funciones Públicas ---
@@ -33,7 +33,6 @@ export const getProductById = async (id) => {
 
 // --- Funciones Protegidas (Admin) ---
 
-// --- 1. FUNCIÓN AÑADIDA QUE FALTABA ---
 /**
  * (ADMIN) Obtiene TODOS los productos (activos e inactivos) para el panel.
  */
@@ -47,7 +46,6 @@ export const getAllProductsForAdmin = async () => {
     throw error;
   }
 };
-// --- FIN FUNCIÓN AÑADIDA ---
 
 /**
  * (ADMIN) Crea un nuevo producto.
@@ -65,7 +63,6 @@ export const createProduct = async (productData, imageFile) => {
     formData.append('productImage', imageFile);
   }
 
-  // --- 2. CORRECCIÓN: Usar fetchWithAuthFormData en lugar de fetch ---
   const data = await fetchWithAuthFormData('/products', formData, 'POST');
   if (!data.product) {
     throw new Error(data.message || 'La API no devolvió el producto creado.');
@@ -89,7 +86,6 @@ export const updateProduct = async (id, productData, imageFile) => {
     formData.append('productImage', imageFile);
   }
 
-  // --- 3. CORRECCIÓN: Usar fetchWithAuthFormData en lugar de fetch ---
   const data = await fetchWithAuthFormData(`/products/${id}`, formData, 'PUT');
   if (!data.product) {
     throw new Error(data.message || 'La API no devolvió el producto actualizado.');
@@ -106,10 +102,8 @@ export const deleteProduct = async (id) => {
   });
 };
 
-// --- (Tus funciones de galería ya estaban correctas) ---
-
 /**
- * (ADMIN) Sube una nueva imagen a la galería.
+ * (ADMIN) Sube una imagen a la galería.
  */
 export const uploadToGallery = async (productId, imageFile, altText = '') => {
   const formData = new FormData();
@@ -119,6 +113,27 @@ export const uploadToGallery = async (productId, imageFile, altText = '') => {
   const data = await fetchWithAuthFormData(`/products/${productId}/gallery`, formData, 'POST');
   return data.image; // La API devuelve { message, image }
 };
+
+// --- INICIO DE NUEVA FUNCIÓN ---
+/**
+ * (ADMIN) Solicita al backend que genere las especificaciones de IA para un producto.
+ * @param {string|number} productId El ID del producto.
+ * @returns {Promise<object>} El objeto de especificaciones (specs) recién generado.
+ */
+export const generateProductSpecs = async (productId) => {
+  try {
+    // Llama al nuevo endpoint POST
+    const specsData = await fetchWithAuth(`/products/${productId}/generate-specs`, {
+      method: 'POST',
+      // No se necesita body, solo el token (que fetchWithAuth ya incluye)
+    });
+    return specsData; // Devuelve el objeto JSON de specs
+  } catch (error) {
+    console.error(`Error al generar specs para el producto ${productId}:`, error);
+    throw error;
+  }
+};
+// --- FIN DE NUEVA FUNCIÓN ---
 
 /**
  * (ADMIN) Elimina una imagen de la galería.

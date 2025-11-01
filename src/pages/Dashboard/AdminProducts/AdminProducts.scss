@@ -87,9 +87,9 @@ table {
       background-color: color.adjust($primary-color, $alpha: -0.9);
     }
     
-    // --- NUEVOS ESTILOS PARA EL BOTÓN DE GALERÍA ---
+    // Estilo para el botón de galería
     &.gallery-btn {
-      padding: 0.3rem 0.5rem; // Más cuadrado
+      padding: 0.3rem 0.5rem; 
       svg { font-size: 1rem; vertical-align: middle; }
       
       &:hover {
@@ -98,10 +98,32 @@ table {
         background-color: color.adjust(#eab308, $alpha: -0.9);
       }
     }
+
+    // --- INICIO DE NUEVO ESTILO ---
+    // Estilo para el botón de Generar Specs
+    &.spec-btn {
+      padding: 0.3rem 0.5rem;
+      svg { font-size: 1rem; vertical-align: middle; }
+      
+      &:hover:not(:disabled) {
+        border-color: #4ade80; // Verde
+        color: #4ade80;
+        background-color: color.adjust(#4ade80, $alpha: -0.9);
+      }
+
+      &:disabled {
+        color: $secondary-text;
+        border-color: $secondary-text;
+        background-color: transparent;
+        cursor: wait;
+        opacity: 0.5;
+      }
+    }
+    // --- FIN DE NUEVO ESTILO ---
   }
 }
 
-// --- ESTILOS DEL MODAL Y FORMULARIO (Sin cambios) ---
+// --- ESTILOS DEL MODAL Y FORMULARIO ---
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -201,4 +223,14 @@ form .form-actions {
       &:hover { background-color: color.adjust($dark-card-bg, $lightness: 15%); }
     }
   }
+}
+
+// Estilo para el loader en el botón de specs
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loader-icon {
+  animation: spin 1s linear infinite;
 }
