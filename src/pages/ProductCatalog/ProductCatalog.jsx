@@ -83,10 +83,14 @@ const ProductCatalog = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
     // Opcional: llevar al usuario al inicio de la lista de productos
-    window.scrollTo({
-      top: 0, // Ajusta si tienes un header sticky
-      behavior: 'smooth',
-    });
+    // Buscamos el header del listado para hacer scroll allí
+    const header = document.querySelector('.product-list-header');
+    if (header) {
+      header.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   const handleCategorySelect = (categoryId) => { 
@@ -143,7 +147,7 @@ const ProductCatalog = () => {
                 type="text"
                 placeholder="Buscar en esta categoría..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.g.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               {searchTerm && <button onClick={() => setSearchTerm('')}><FiX /></button>}
             </div>
