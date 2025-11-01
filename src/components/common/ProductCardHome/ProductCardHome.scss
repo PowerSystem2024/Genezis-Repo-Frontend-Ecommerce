@@ -49,15 +49,36 @@
   
   .card-footer {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin-top: 1rem;
+    gap: 0.5rem;
+    
+    // --- 1. MODIFICACIÓN ---
+    // Por defecto (móvil), centramos el contenido del footer.
+    justify-content: center;
+
+    // En pantallas 'sm' (576px) o más grandes, volvemos a la normalidad.
+    @media (min-width: $breakpoint-sm) {
+      justify-content: flex-start; // O el 'space-between' si lo preferías
+    }
+    // --- FIN MODIFICACIÓN ---
   }
   
   .card-price {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: $primary-color;
+    flex-grow: 1;
+    flex-shrink: 1;
+    line-height: 1.4;
+    
+    // --- 2. MODIFICACIÓN ---
+    // En móvil, el precio no debe crecer, así se centra correctamente.
+    @media (max-width: ($breakpoint-sm - 1px)) {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+    // --- FIN MODIFICACIÓN ---
   }
 
   .add-to-cart-btn {
@@ -71,6 +92,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    flex-shrink: 0;
     
     svg { font-size: 1.25rem; }
 
@@ -78,5 +100,12 @@
       background-color: $primary-color;
       color: white;
     }
+
+    // --- 3. MODIFICACIÓN ---
+    // Ocultamos el botón en pantallas móviles (menores a 576px)
+    @media (max-width: ($breakpoint-sm - 1px)) {
+      display: none;
+    }
+    // --- FIN MODIFICACIÓN ---
   }
 }
